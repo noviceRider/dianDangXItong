@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<!-- 商品信息修改 -->
+	<div id="modifyGoodsContainerPanel">
+			<form id="modifyGoodsForm" method="post" class="easyui-form">
+				<table style="border-collapse: separate;border-spacing: 10px;" >
+		  			<tr>
+		  				<td style="text-align: right;width: 65px;">商品编号&nbsp;</td>
+		  				<td ><input id="modifygoodsId" name="goodsId" ><input id="modifygoodsIdHideen" name="goodsId" hidden></td>
+		  			</tr>
+		  			<tr>
+		  				<td style="text-align: right;width: 65px;">来源门店&nbsp;</td>
+		  				<td ><input id="modifyshopCode" name="shopCode" ></td>
+		  				
+		  			</tr>
+		  			<tr>
+		  				<td style="text-align: right;width: 65px;">录入时间&nbsp;</td>
+		  				<td ><input id="modifyinputDate" name="inputDate" ></td>
+		  			</tr>
+		  			<tr>
+		  				<td style="text-align: right;width: 65px;">分类一级&nbsp;</td>
+		  				<td ><input id="modifycatCode" name="catCode" ></td>
+		  			</tr>
+		  			<tr>
+		  				<td style="text-align: right;width: 65px;">分类二级&nbsp;</td>
+		  				<td ><input id="modifysubCatCode" name="subCatCode" ></td>
+		  			</tr>
+		  			<tr>
+		  				<td style="text-align: right;width: 65px;">分类三级&nbsp;</td>
+		  				<td ><input id="modifydetailCatCode" name="detailCatCode" ></td>
+		  			</tr>
+		  			<tr>
+		  				<td style="text-align: right;width: 65px;">商品名称&nbsp;</td>
+		  				<td ><input id="modifygoodsName" name="goodsName" ></td>
+		  			</tr>
+		  			<tr>
+		  				<td style="text-align: right;width: 65px;">商品品牌&nbsp;</td>
+		  				<td ><input id="modifybrandCode" name="brandCode"></td>
+		  			</tr>
+		  			<tr>
+		  				<td style="text-align: right;width: 65px;">客户首买价&nbsp;</td>
+		  				<td ><input id="modifyfirstPrice" name="firstPrice"></td>
+		  			</tr>
+		  			<tr>
+		  				<td style="text-align: right;width: 65px;">商品描述&nbsp;</td>
+		  				<td ><input id="modifygoodsDesc" name="goodsDesc"><input id="modifyGoodsStat" name="goodsStatName" hidden></td>
+		  			</tr>
+	  			</table>
+			</form>
+		</div>
+		
+		<!-- 商品信息修改界面的下一页和取消按钮 -->
+		<div id="sc_modifyGoods">
+			<a id="modifyGoodsNextPageBtn" class="easyui-linkbutton" data-options="iconCls:'icon-import'"  ></a>
+			<a id="modifyGoodsCloseBtn" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'"  ></a>
+		</div>
+		
+		<!-- 修改界面商品属性页 -->
+		<div id="modifyProductAttributeContainerPanel" >
+			<form id="modifyProductAttributeForm">
+				<table style="border-collapse: separate;border-spacing: 10px;" id="modifyProductAttributeTable"></table>
+			</form>
+			<form id="modifyMultiattribute">
+				<table style="border-collapse: separate;border-spacing: 10px;" id="modifyMultiattributeTable"></table>
+			</form>
+			<form id="modifyImg">
+				<table style="border-collapse: separate;border-spacing: 10px;" id="modifyImgTable"></table>
+			</form>
+		</div>
+		
+		<!-- 修改界面的商品属性页的上一页和确定，取消按钮 -->
+		<div id="sc_modifyAttribute">
+			<a id="modifyAttributeBackBtn" class="easyui-linkbutton" data-options="iconCls:'icon-back'"  ></a>
+			<a id="modifyAttributeOkBtn" class="easyui-linkbutton" data-options="iconCls:'icon-ok'"  ></a>
+			<a id="modifyAttributeSave" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'"  ></a>
+		</div>
+</body>
+</html>

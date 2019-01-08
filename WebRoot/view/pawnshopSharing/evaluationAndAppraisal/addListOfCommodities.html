@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<!-- 新增商品信息界面 -->
+	<div id="addGoodsContainerPanel" class="easyui-dialog" data-options="title:'充值界面',closed:true,buttons:'#sc_goods',modal:true" >
+			<form id="addGoodsForm" method="post" class="easyui-form">
+				<table style="border-collapse: separate;border-spacing: 10px;" >
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">商品编号&nbsp;</td>
+	  				<td ><input id="addGoodsId" name="goodsId" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">来源门店&nbsp;</td>
+	  				<td ><input id="addShopCode" name="shopCode" ></td>
+	  				
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">录入时间&nbsp;</td>
+	  				<td ><input id="addInputDate" name="inputDate" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">分类一级&nbsp;</td>
+	  				<td ><input id="addCatCode" name="catCode" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">分类二级&nbsp;</td>
+	  				<td ><input id="addSubCatCode" name="subCatCode" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">分类三级&nbsp;</td>
+	  				<td ><input id="addDetailCatCode" name="detailCatCode" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">商品名称&nbsp;</td>
+	  				<td ><input id="addGoodsName" name="goodsName" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">商品品牌&nbsp;</td>
+	  				<td ><input id="addBrandCode" name="brandCode"></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">客户首买价&nbsp;</td>
+	  				<td ><input id="addFirstPrice" name="firstPrice"></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">商品描述&nbsp;</td>
+	  				<td ><input id="addGoodsDesc" name="goodsDesc"></td>
+	  			</tr>
+	  		</table>
+			</form>
+		</div>
+		
+		<!-- 新增商品信息界面的下一页和取消按钮 -->
+		<div id="sc_goods">
+			<a id="addGoodsNextPageBtn" class="easyui-linkbutton" data-options="iconCls:'icon-import'"  ></a>
+			<!-- <a id="addGoodsSaveBtn" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'"  onclick="addGoodsSave();"></a> -->
+			<a id="addGoodsCloseBtn" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'"  ></a>
+		</div>
+		
+		
+	<!-- 新增商品唯一属性和单一属性,多属性,图片 -->
+	<div id="addProductAttributeContainerPanel" class="easyui-dialog" data-options="closed:true,buttons:'#sc_addProductAttribute',modal:true" >
+			<form id="addProductAttributeForm" method="post" class="easyui-form">
+				<table style="border-collapse: separate;border-spacing: 10px;" id="addProductAttributeTable"></table>
+			</form>
+			<form id="addMultiattribute" method="post" class="easyui-form">
+				<table style="border-collapse: separate;border-spacing: 10px;" id="addMultiattributeTable"></table>
+			</form>
+			<form id="addImg" method="post" class="easyui-form" enctype="multipart/form-data">
+				<table style="border-collapse: separate;border-spacing: 10px;" id="addImgTable"></table>
+			</form>
+		</div>
+		
+		<!-- 新增商品属性界面的上一页，下一页，取消按钮 -->
+		<div id="sc_addProductAttribute">
+			<a id="addProductAttributePreviousPageBtn" class="easyui-linkbutton" data-options="iconCls:'icon-back'" ></a>
+			<a id="addProductAttributeNextPageBtn" class="easyui-linkbutton" data-options="iconCls:'icon-ok'"  ></a>
+			<a id="addProductAttributeCloseBtn" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'"  ></a>
+		</div>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.2//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huibo.pawn.dao.ChannelDao">
+
+	<!-- queryChannelTable -->
+	<!-- 查询工时统计月报 -->
+	<select id="queryChannelTable" resultType="com.huibo.pawn.bo.ChannelBo" parameterType="com.bn.javax.dao.Page">
+	SELECT
+		c.CHANNEL_CODE     channelCode,
+		c.CHANNEL_NAME     channelName,
+		c.MOBILE           mobile,
+		c.ID_NO            idNo,
+		c.ACCOUNT_NAME     accountName,
+		c.BANK_NAME        bankName,
+		c.ACCOUNT          account,
+		c.MEMBER_COUNT     memberCount,
+		c.TOTAL_CHARGE     totalCharge,
+		c.CONSUME          consume,
+		c.CHANNEL_STAT     channelState,
+		c.CREATE_BY        createBy,
+		c.CREATE_TIME      createTime,
+		c.MODIFY_BY        modifyBy,
+		c.MODIFY_TIME      modifyTime
+	FROM
+		i_pawn_channel c
+	LEFT JOIN
+		i_pawn_member_info m
+	ON
+	  m.CHANNEL_CODE = c.CHANNEL_CODE
+	LEFT JOIN
+		info_ge_dict dict
+	ON
+		dict.DICT_CODE = c.CHANNEL_STAT
+	where
+		1 = 1
+	<!-- 关键字查询 -->
+	<if test="params.bo.keyWord != null and params.bo.keyWord != ''">
+		and
+		(
+			c.CHANNEL_NAME like '%${params.bo.keyWord}%'
+			or c.BANK_NAME like '%${params.bo.keyWord}%'
+			or c.CREATE_BY like '%${params.bo.keyWord}%'
+		)
+	</if>
+		GROUP BY
+			c.CHANNEL_CODE
+			<!-- 排序 -->
+	<if test="params.bo.sort != null and params.bo.sort != ''">
+		order by ${params.bo.sort}
+			<if test="params.bo.order != null and params.bo.order != ''">
+			 ${params.bo.order}
+			</if>
+	</if>
+	<!-- 设置默认排序 -->
+	<if test="params.bo.order == null or params.bo.order == ''">
+		order by c.CREATE_TIME desc
+	</if>
+	</select>
+	
+	<!-- validateChannel -->
+	<!-- 验证编号非空 不重复 -->
+	<select id="validateChannel" resultType="Integer" parameterType="String">
+		SELECT COUNT(*) FROM i_pawn_channel c
+		<where>
+			<if test="channelCode != null and channelCode != ''">
+				and c.CHANNEL_CODE = #{channelCode}
+			</if>
+			<if test="channelName != null and channelName != ''">
+				and c.CHANNEL_NAME = #{channelName}
+			</if>
+		</where>
+	</select>
+	
+	<!-- addChannel -->
+	<!-- 新增 -->
+	<insert id="addChannel" parameterType="com.huibo.pawn.bo.ChannelBo">
+		insert into i_pawn_channel
+		(
+			CHANNEL_CODE,
+			CHANNEL_NAME,
+			MOBILE,
+			ID_NO,
+			ACCOUNT_NAME,
+			BANK_NAME,
+			ACCOUNT,
+			MEMBER_COUNT,
+			TOTAL_CHARGE,
+			CONSUME,
+			CHANNEL_STAT,
+			CREATE_BY,
+			CREATE_TIME,
+			MODIFY_BY,
+			MODIFY_TIME
+		)
+		values
+		(
+			#{channelCode},
+			#{channelName},
+			#{mobile},
+			#{idNo},
+			#{accountName},
+			#{bankName},
+			#{account},
+			#{memberCount},
+			#{totalCharge},
+			#{consume},
+			#{channelState},
+			#{createBy},
+			now(),
+			#{modifyBy},
+			now()
+		)
+	</insert>
+	
+	<!-- romoveChannelById -->
+	<!-- 删除 -->
+	<delete id="romoveChannelById" parameterType="String">
+		delete 
+			from i_pawn_channel
+		where 
+			CHANNEL_CODE in (${channelCodes})
+	</delete>
+	
+	<!-- queryChannelById -->
+	<!-- 单条查询 -->
+	<select id="queryChannelById" resultType="com.huibo.pawn.po.ChannelPo" parameterType="String">
+		SELECT
+			c.CHANNEL_CODE     channelCode,
+			c.CHANNEL_NAME     channelName,
+			c.MOBILE           mobile,
+			c.ID_NO            idNo,
+			c.ACCOUNT_NAME     accountName,
+			c.BANK_NAME        bankName,
+			c.ACCOUNT          account,
+			c.MEMBER_COUNT     memberCount,
+			c.TOTAL_CHARGE     totalCharge,
+			c.CONSUME          consume,
+			c.CHANNEL_STAT     channelState,
+			c.CREATE_BY        createBy,
+			c.CREATE_TIME      createTime,
+			c.MODIFY_BY        modifyBy,
+			c.MODIFY_TIME      modifyTime
+		FROM
+			i_pawn_channel c
+		where
+			c.CHANNEL_CODE = #{channelCode}
+	</select>
+	
+	<!-- modifyChannel -->
+	<!-- 修改 -->
+	<update id="modifyChannel" parameterType="com.huibo.pawn.bo.ChannelBo">
+		update i_pawn_channel
+		set
+			CHANNEL_NAME    = #{channelName},
+			MOBILE          = #{mobile},
+			ID_NO           = #{idNo},
+			ACCOUNT_NAME    = #{accountName},
+			BANK_NAME       = #{bankName},
+			ACCOUNT         = #{account},
+			MEMBER_COUNT    = #{memberCount},
+			TOTAL_CHARGE    = #{totalCharge},
+			CONSUME         = #{consume},
+			CHANNEL_STAT    = #{channelState},
+			MODIFY_BY       = #{modifyBy},
+			MODIFY_TIME     = now()
+		where 
+			CHANNEL_CODE    = #{channelCode}
+	</update>
+	
+	<!-- 禁用、启用转换 -->
+	<update id="switchM" parameterType="com.huibo.pawn.bo.ChannelBo">
+		update 
+			i_pawn_channel
+		set
+			CHANNEL_STAT  = #{channelState},
+			MODIFY_TIME   = NOW()
+		where 
+			CHANNEL_CODE  = #{channelCode}
+	</update>
+	
+</mapper>

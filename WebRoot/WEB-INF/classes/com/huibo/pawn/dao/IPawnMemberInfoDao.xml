@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.2//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huibo.pawn.dao.IPawnMemberInfoDao">
+	
+	<!-- 加载数据网格和条件搜索 -->
+	<select id="vipSearch" resultType="com.huibo.pawn.bo.IPawnMemberInfoBo" parameterType="com.bn.javax.dao.Page">
+		select 
+			memberInfo.MEMBER_ID         		memberId,			<!-- 会员编号 -->  
+		    memberInfo.MEMBER_NAME         		memberName,			<!-- 姓名 --> 
+		    memberInfo.MOBILE              		mobile,				<!-- 手机 --> 
+		    memberInfo.CERT_NO              	certNo,				<!-- 证件号码 --> 
+		    memberInfo.ACCOUNT_NAME         	accountName,		<!-- 账户名称 --> 
+		    memberInfo.BANK_NAME           		bankName,			<!-- 开户行 --> 
+		    memberInfo.ACCOUNT             		account,			<!-- 账号 --> 
+		    memberInfo.BIRTHDAY             	birthday,			<!-- 生日 --> 
+		    memberInfo.LEVEL                	level,				<!-- 会员等级 --> 
+		    memberInfo.BALANCE              	balance,			<!-- 可用余额 --> 
+		    memberInfo.BLOCKED_BALANCES     	blockedBalances,	<!-- 冻结金额 --> 
+		    memberInfo.CREDIT              		credit,				<!-- 透支额度 --> 
+		    memberInfo.CREDIT_ENABLED           creditEnabled,    	<!-- 是否允许透支 --> 
+		    memberInfo.AVAILABLE_POINT     		availablePoint,		<!-- 可用积分 --> 
+		    memberInfo.TOTAL_POINT          	totalPoint,			<!-- 累计积分 --> 
+		    memberInfo.JOIN_DATE            	joinDate,			<!-- 入会日期 --> 
+		    memberInfo.CHANNEL_CODE         	channelCode,		<!-- 所属渠道编号 --> 
+		    pawnChannel.CHANNEL_NAME			channelName,		<!-- 所属渠道名称 -->
+		    memberInfo.MEMBER_STAT         		memberStat,			<!-- 状态编号 --> 
+		    geDict.DICT_DESC					memberStatDesc,		<!-- 状态名称 -->
+		    memberInfo.CREATE_BY            	createBy,			<!-- 创建人 --> 
+		    memberInfo.CREATE_TIME          	createTime,			<!-- 创建时间 --> 
+		    memberInfo.MODIFY_BY            	modifyBy,			<!-- 修改人 --> 
+		    memberInfo.MODIFY_TIME 				modifyTime			<!-- 修改时间 --> 
+		from
+			I_PAWN_MEMBER_INFO memberInfo
+		left join
+			info_ge_dict geDict on memberInfo.MEMBER_STAT = geDict.DICT_CODE 
+			and geDict.TYPE_CODE = "PC_VALID_N"
+		left join	
+			i_pawn_channel pawnChannel on memberInfo.CHANNEL_CODE = pawnChannel.CHANNEL_CODE
+		<where>
+			<if test="params.bo.memberStat != null and params.bo.memberStat != ''">		<!-- 状态搜索 -->
+				and memberInfo.MEMBER_STAT = #{params.bo.memberStat}
+			</if>
+			<if test="params.bo.keyWord != null and params.bo.keyWord != ''">		<!-- 模糊搜索 -->
+				and memberInfo.MEMBER_ID like '%${params.bo.keyWord}%'
+				or memberInfo.MEMBER_NAME like '%${params.bo.keyWord}%'
+			</if>
+		</where>	
+	</select>
+	
+	<!-- 新增会员 -->
+	<insert id="vipSave">
+		insert
+		into
+			I_PAWN_MEMBER_INFO
+				(
+					MEMBER_ID,
+					MEMBER_NAME,
+					MOBILE,
+					CERT_NO,
+					ACCOUNT_NAME,
+					BANK_NAME,
+					ACCOUNT,
+					BIRTHDAY,
+					LEVEL,
+					BALANCE,
+					BLOCKED_BALANCES,
+					CREDIT,
+					AVAILABLE_POINT,
+					TOTAL_POINT,
+					JOIN_DATE,
+					CHANNEL_CODE,
+					CREATE_BY,
+					CREATE_TIME,
+					MODIFY_BY,
+					MODIFY_TIME,
+					MEMBER_STAT
+				)
+			values
+				(
+					#{memberId},
+					#{memberName},
+					#{mobile},
+					#{certNo},
+					#{accountName},
+					#{bankName},
+					#{account},
+					#{birthday},
+					#{level},
+					#{balance},
+					#{blockedBalances},
+					#{credit},
+					#{balance}*0.01,			<!-- 可用积分 -->
+					#{balance}*0.01,			<!-- 累计积分 -->
+					<!-- #{availablePoint}, -->
+					<!-- #{totalPoint}, -->
+					#{joinDate},
+					#{channelCode},
+					#{createBy},
+					now(),
+					#{modifyBy},
+					now(),
+					'01'
+				)
+	</insert>
+
+	<!-- 删除会员 -->
+	<delete id="delVip">
+		delete
+			I_PAWN_MEMBER_INFO
+		from
+			I_PAWN_MEMBER_INFO
+		where
+			MEMBER_ID
+		in
+			<foreach collection="array" item="id" open="(" close=")" separator=",">
+		  		#{id}
+			</foreach>	
+	</delete>
+	
+	<!-- 修改填坑 -->
+	<select id="modifyVip" resultType="com.huibo.pawn.bo.IPawnMemberInfoBo">
+		select 
+			memberInfo.MEMBER_ID         		memberId,			<!-- 会员编号 -->  
+		    memberInfo.MEMBER_NAME         		memberName,			<!-- 姓名 --> 
+		    memberInfo.MOBILE              		mobile,				<!-- 手机 --> 
+		    memberInfo.CERT_NO              	certNo,				<!-- 证件号码 --> 
+		    memberInfo.ACCOUNT_NAME         	accountName,		<!-- 账户名称 --> 
+		    memberInfo.BANK_NAME           		bankName,			<!-- 开户行 --> 
+		    memberInfo.ACCOUNT             		account,			<!-- 账号 --> 
+		    memberInfo.BIRTHDAY             	birthday,			<!-- 生日 --> 
+		    memberInfo.LEVEL                	level,				<!-- 会员等级 --> 
+		    memberInfo.BALANCE              	balance,			<!-- 可用余额 --> 
+		    memberInfo.BLOCKED_BALANCES     	blockedBalances,	<!-- 冻结金额 --> 
+		    memberInfo.CREDIT              		credit,				<!-- 透支额度 --> 
+		    memberInfo.CREDIT_ENABLED           creditEnabled,    	<!-- 是否允许透支 --> 
+		    memberInfo.AVAILABLE_POINT     		availablePoint,		<!-- 可用积分 --> 
+		    memberInfo.TOTAL_POINT          	totalPoint,			<!-- 累计积分 --> 
+		    memberInfo.JOIN_DATE            	joinDate,			<!-- 入会日期 --> 
+		    memberInfo.CHANNEL_CODE         	channelCode,		<!-- 所属渠道编号 -->
+		    pawnChannel.CHANNEL_NAME 			channelName,		<!-- 所属渠道名称 -->
+		    memberInfo.MEMBER_STAT         		memberStat,			<!-- 状态编号 --> 
+		    geDict.DICT_DESC					memberStatDesc,		<!-- 状态名称 -->
+		    memberInfo.CREATE_BY            	createBy,			<!-- 创建人 --> 
+		    memberInfo.CREATE_TIME          	createTime,			<!-- 创建时间 --> 
+		    memberInfo.MODIFY_BY            	modifyBy,			<!-- 修改人 --> 
+		    memberInfo.MODIFY_TIME 				modifyTime			<!-- 修改时间 --> 
+		from
+			I_PAWN_MEMBER_INFO memberInfo
+		left join
+			info_ge_dict geDict on memberInfo.MEMBER_STAT = geDict.DICT_CODE 
+			and geDict.TYPE_CODE = "PC_VALID_N"
+		left join	
+			i_pawn_channel pawnChannel on memberInfo.CHANNEL_CODE = pawnChannel.CHANNEL_CODE
+		where 
+			memberInfo.MEMBER_ID = #{memberId}
+	</select>
+	
+	<!-- 修改会员信息 -->
+	<update id="modifyVipSave">
+		update
+			I_PAWN_MEMBER_INFO
+		set
+			MEMBER_NAME = #{memberName},
+			MOBILE = #{mobile},
+			CERT_NO = #{certNo},
+			ACCOUNT_NAME = #{accountName},
+			BANK_NAME = #{bankName},
+			ACCOUNT = #{account},
+			BIRTHDAY = #{birthday},
+			LEVEL = #{level},
+			BALANCE = #{balance},
+			BLOCKED_BALANCES = #{blockedBalances},
+			CREDIT = #{credit},
+			<!-- AVAILABLE_POINT = #{availablePoint},
+			TOTAL_POINT = #{totalPoint}, -->
+			JOIN_DATE = #{joinDate},
+			CHANNEL_CODE = #{channelCode},
+			MODIFY_BY = #{modifyBy},
+			MODIFY_TIME = now()
+		where
+			MEMBER_ID = #{memberId}
+	</update>
+	
+	<!-- 充值 -->
+	<update id="rechargeVipSave">
+		update
+			I_PAWN_MEMBER_INFO
+		set
+			BALANCE = BALANCE + #{rechargeMoney},
+			AVAILABLE_POINT = AVAILABLE_POINT + #{rechargeMoney}*0.01,     <!-- 可用积分 -->
+			TOTAL_POINT = TOTAL_POINT + #{rechargeMoney}*0.01        <!-- 累计积分 -->
+		where
+			MEMBER_ID = #{memberId}
+	</update>
+	
+	<!-- 会员序号非重复验证 -->
+	<select id="serialNumberValidation" resultType="Integer" parameterType="String">
+		select
+			count(*)
+		from
+			I_PAWN_MEMBER_INFO
+		<where>
+			<if test="memberId != null and memberId !=''">
+				and MEMBER_ID = #{memberId}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 修改状态 -->
+	<update id="forbidden">
+		update
+			I_PAWN_MEMBER_INFO
+		set
+			MEMBER_STAT = #{memberStat}
+		where
+			MEMBER_ID = #{memberId}
+	</update>
+	
+	<!-- 查询所有渠道 -->
+	<select id="getChannel" resultType="com.huibo.pawn.bo.ChannelBo">
+		select
+			CHANNEL_CODE     channelCode,
+			CHANNEL_NAME	 channelName
+		from
+			I_PAWN_CHANNEL
+	</select>
+</mapper>

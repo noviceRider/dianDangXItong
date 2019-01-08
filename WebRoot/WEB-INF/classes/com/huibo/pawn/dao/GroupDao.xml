@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huibo.pawn.dao.GroupDao">
+<!-- 初始化加载页面数据的SQL -->
+<select id="groupTable" resultType="com.huibo.pawn.po.AttrGroupPo">
+		select
+		g.group_code					groupCode,
+		g.group_name					groupName,
+		g.group_stat					groupState,
+		group_concat(c.cat_name)		catName,
+		count.count		 				num
+	from 
+		c_pawn_attr_group  g	
+	left join 
+		c_pawn_attr_group_cat_rel gcr
+	on g.group_code = gcr.group_code 
+	
+	left join 
+		c_pawn_product_cat c
+	on gcr.cat_code = c.cat_code 
+	
+	left join 
+		(		
+			select 
+				g.group_code,
+				c.attr_code,
+				c.attr_name,
+				count(*)	count 
+			from 
+				c_pawn_attr_conf c
+				
+			left join 
+				c_pawn_attr_group g
+			on find_in_set (g.group_code,c.group_code)
+			where g.group_stat = '01'
+			group by g.group_code
+		) count 
+	on g.group_code = count.group_code 
+	where
+	1 = 1
+	<if test="params.bo.keyWord != null and params.bo.keyWord != ''">
+		and ( g.group_name like '%${params.bo.keyWord}%'
+		or g.group_code  like '%${params.bo.keyWord}%'
+		or c.cat_name like '%${params.bo.keyWord}%'
+		)
+	</if>
+	GROUP BY g.GROUP_CODE
+</select>
+
+<!-- 禁用和启用 -->
+<update id="changeGroupState">
+	update
+		c_pawn_attr_group
+	set
+		GROUP_STAT = #{groupState}
+	where
+		GROUP_CODE = #{groupCode}
+</update>
+
+<!-- 编号重复验证 -->
+<select id="validatePriorityCode" resultType="Integer"  parameterType="String">
+	SELECT 
+	COUNT(*) 
+	FROM 
+		c_pawn_attr_group
+	<where>
+		<if test="groupCode != null and groupCode != ''">
+			and GROUP_CODE = "${groupCode}"
+		</if>
+	</where>
+</select>
+
+<!-- 新增属性组的SQL -->
+<insert id="addGroup">
+	insert
+	into
+		c_pawn_attr_group(
+			GROUP_CODE ,
+			GROUP_NAME ,
+			GROUP_STAT
+		)
+	values(
+		#{groupCode} ,
+		#{groupName} ,
+		#{groupState} 
+	)
+</insert>
+
+<!-- 新增属性组与商品大类关联数据的SQL -->
+<insert id="addAttrAndProd">
+	insert
+	into
+		c_pawn_attr_group_cat_rel(
+			GROUP_CODE ,
+			CAT_CODE
+		)
+	values
+	<foreach collection="a" item="catCode"
+		open="(" close=")" separator="),(">
+	 #{groupCode}, #{catCode}
+	</foreach>
+</insert>
+
+<!-- 根据编号查询属性组数据 -->
+<select id="getAttrByGroupCode" resultType="com.huibo.pawn.po.AttrGroupPo">
+	SELECT 
+		GROUP_CODE 						groupCode ,
+		GROUP_NAME 						groupName 
+	FROM
+		c_pawn_attr_group
+	where
+		GROUP_CODE = #{groupCode}
+</select>
+
+<!-- 根据编号查询已选商品大类 -->
+<select id="getCommodityByGroupCode" resultType="com.huibo.pawn.po.ProductCatPo">
+	select
+		cat.CAT_CODE 		catCode ,
+		cat.CAT_NAME		catName 
+	from
+		c_pawn_product_cat  cat
+	left join
+		c_pawn_attr_group_cat_rel rel
+	on
+		rel.CAT_CODE = cat.CAT_CODE
+	where
+		rel.GROUP_CODE = ${groupCode}
+		
+</select>
+
+<!-- 根据编号修改属性组 -->
+<update id="updGroup">
+	update
+		c_pawn_attr_group
+	set
+		GROUP_NAME = #{groupName}
+	where
+		GROUP_CODE = #{groupCode}
+</update>
+
+<!-- 删除关联商品大类的SQL -->
+<delete id="removeGroupAndProd">
+	delete
+	from
+		c_pawn_attr_group_cat_rel
+	where
+		GROUP_CODE in (${groupCode})
+</delete>
+
+<!-- 删除属性组的方法 -->
+<delete id="delGroup">
+	delete
+	from
+		c_pawn_attr_group
+	where
+		GROUP_CODE in (${groupCode})	
+</delete>
+
+<!-- 根据属性组编号获取旗下的属性编号 -->
+<select id="getAttrCode" resultType="com.huibo.pawn.po.ConfPo">
+	SELECT
+	ATTR_CODE  attrCode 
+FROM
+	c_pawn_attr_conf
+WHERE
+	GROUP_CODE in (${groupCode})
+</select>
+
+<!-- 删除属性的SQL -->
+<delete id="delConf">
+	delete
+	from
+		c_pawn_attr_conf
+	where
+		ATTR_CODE in (${attrCode})
+</delete>
+</mapper>

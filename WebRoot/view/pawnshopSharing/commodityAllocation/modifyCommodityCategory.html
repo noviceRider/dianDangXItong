@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div id="modifyProductCategoriesContainerPanel" class="easyui-dialog" data-options="title:'新增商品大类',closed:true,buttons:'#sc_modify',modal:true" style="width:420px;height:400px;">
+			<form id="modifyProductCategoriesForm" method="post" class="easyui-form">
+				<table style="border-collapse: separate;border-spacing: 10px;" >
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">分类编号&nbsp;</td>
+	  				<td colspan="3"><input id="modifyCatCode" name="catCode" class="easyui-textbox" data-options="required:true,width:250"></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">分类名称&nbsp;</td>
+	  				<td colspan="3"><input id="modifyCatName" name="catName" class="easyui-textbox" data-options="required:true,width:250"></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">排序&nbsp;</td>
+	  				<td colspan="3"><input id="modifySortNo" name="sortNo" class="easyui-textbox" data-options="required:true,width:250"></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">分类图标&nbsp;</td>
+	  				<td colspan="3"><input id="modifyEvalPicDef" name="evalPicDef" class="easyui-filebox" data-options="required:true,width:250,buttonText:'选择文件',buttonAlign:'right'"></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">备注&nbsp;</td>
+	  				<td colspan="3"><input id="modifyCatDesc" name="catDesc" class="easyui-textbox" data-options="required:true,height:80,multiline:true,width:250"></td>
+	  			</tr>
+	  			<tr>
+	  				<td colspan="3" style="text-align: left;width: 65px;">鉴定图定义&nbsp;</td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">&nbsp;</td>
+	  				<td ><input id="modifyFrontBlockedBalances" name="blockedBalances" value="正面" class="easyui-textbox" data-options="required:true,width:180"></td>
+	  				<td ><select id="modifyFrontcheckbox" name="modifyFrontcheckbox" class="easyui-combobox" data-options="required:true,width:60,panelHeight:true">
+	  					<option value="1">必选</option>
+	  					<option value="0">可选</option>
+	  				</select></td>
+	  				<td><a id="modifyCancelFront" class="easyui-linkbutton">删除</a></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">&nbsp;</td>
+	  				<td ><input id="modifyVersoBlockedBalances" name="blockedBalances" value="背面" class="easyui-textbox" data-options="required:true,width:180"></td>
+	  				<td ><select id="modifyVersocheckbox" name="modifyVersocheckbox" class="easyui-combobox" data-options="required:true,width:60,panelHeight:true">
+	  					<option value="1">必选</option>
+	  					<option value="0">可选</option>
+	  				</select></td>
+	  				<td><a id="modifyCancelVerso" class="easyui-linkbutton">删除</a></td>
+	  			</tr>	
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">&nbsp;</td>
+	  				<td ><input id="modifylabel" name="blockedBalances" value="标签" class="easyui-textbox" data-options="required:true,width:180"></td>
+	  				<td ><select id="modifylabelcheckbox" name="modifylabelcheckbox" class="easyui-combobox" data-options="required:true,width:60,panelHeight:true">
+	  					<option value="1">必选</option>
+	  					<option value="0">可选</option>
+	  				</select></td>
+	  				<td><a id="modifyCancelLabel" class="easyui-linkbutton">删除</a></td>
+	  			</tr>
+	  			<!-- <tr>
+	  				<td style="text-align: right;width: 65px;">&nbsp;</td>
+	  				<td><a id="addTr" class="easyui-linkbutton">增加</a></td>
+	  			</tr> -->
+	  		</table>
+			</form>
+			<form action="" id="modifyForm">
+				<table id="modifyTable" style="border-collapse: separate;border-spacing: 10px;"></table>
+				<a id="modifyCancelLabel"></a>
+			</form>
+			<center><a id="modifyTr" class="easyui-linkbutton" >增加</a></center>
+		</div>
+		
+	<!-- 保存，取消按钮 -->	
+	<div id="sc_modify">
+		<a id="modifySaveBtn" class="easyui-linkbutton" data-options="iconCls:'icon-save'"  onclick="modifyProductCategoriesSave();">保存</a>
+		<a id="modifyCloseBtn" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" onclick="modifyProductCategoriesCancel();">取消</a>
+	</div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	.all {
+	float:left
+}
+
+</style>
+</head>
+<body>
+	<div id="add_modify_store_Panel">
+	<div style="margin:5px 0;"></div>
+		<div>
+			<table>
+				<tr>
+					<td align="right">编号</td>
+					<td><input id="add_modify_store_shopCode" name="shopCode"></td>
+				</tr>
+				<tr>
+					<td align="right">门店名称</td>
+					<td><input id="add_modify_store_shopName" name="shopName"></td>
+				</tr>
+				<tr>
+					<td align="right">联系人</td>
+					<td><input id="add_modify_store_contact" name="contact"></td>
+				</tr>
+				<tr>
+					<td align="right">电话</td>
+					<td><input id="add_modify_store_phoneNo" name="phoneNo"></td>
+				</tr>
+				<tr>
+					<td align="right">地址</td>
+					<td><input id="add_modify_store_address" name="address"></td>
+				</tr>
+			</table>
+			<table>
+				<tr>
+					<td>待选仓库</td>
+					<td width="40px"></td>
+					<td>已选仓库</td>
+				</tr>
+				<tr>
+					<td><input name="keyword" id="selectWarehouseByNo" value=""></td>
+					<td width="40px"></td>
+					<td><input name="keyByYes" id="selectWarehouseByYes" value=""></td>
+				</tr>
+			</table>
+			<div style="width: '100%'">
+				<div class="all">
+					<select name="left" id="left" class="left" multiple="multiple" size="10" style="width: 120px;margin-left: 10px"></select>
+				</div>
+				<div class="all" align="center" style="margin-top: 30px; width: 80px">
+					<a id="moveRight" onclick="moveRight()"></a><br>
+					<a id="moveAllRight" onclick="moveAllRight()"></a><br>
+					<a id="moveLeft" onclick="moveLeft()">&lt;</a><br>
+					<a id="moveAllLeft" onclick="moveAllLeft()"></a><br>
+				</div>
+				<div class="all">
+					<select name="left" id="right" class="right" multiple="multiple" size="10" style="width: 120px"></select>
+				</div>
+			</div>
+		</div>
+		<div id="buttons" align="right">
+			<a id="YES"></a>&nbsp;&nbsp;&nbsp;&nbsp;
+			<a id="NO"></a>&nbsp;&nbsp;&nbsp;&nbsp;
+		</div>
+	</div>
+</body>
+</html>

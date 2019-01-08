@@ -1,0 +1,804 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.2//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huibo.pawn.dao.ProductListDao">
+	<!-- 加载数据表格以及搜索 -->
+	<select id="productListSearch" resultType="com.huibo.pawn.bo.IpawnGoodsBo">
+		select
+			pawnGoods.GOODS_ID          	goodsId,
+			pawnGoods.GOODS_NAME			goodsName,
+			productCat.CAT_NAME				detailCatCode,
+			productCatOne.CAT_NAME			subCatCode,
+			productCatTwo.CAT_NAME			catCode,
+			pawnGoods.INPUT_USER			inputUser,
+			pawnGoods.SURVEYOR				surveyor,
+			pawnGoods.ASSESSOR				assessor,
+			pawnGoods.INPUT_DATE			inputDate,
+			dict.DICT_DESC					goodsStat,
+			dict.DICT_CODE					goodsStatName,
+			pawnShop.SHOP_NAME				shopCode,
+			pawnBrand.BRAND_NAME			brandCode,
+			pawnGoods.BRAND_CODE			brandName,
+			pawnGoods.FIRST_PRICE			firstPrice,
+			pawnGoods.GOODS_DESC			goodsDesc,
+			pawnGoods.SUB_CAT_CODE			subCatName,
+			pawnGoods.DETAIL_CAT_CODE		detailCatName,
+			pawnShop.SHOP_CODE				shopName
+			<!-- pawnAttrConf.ATTR_NAME			attrName,
+			goodsAttrRel.ATTR_VALUE			attrValue -->
+		from
+			I_PAWN_GOODS pawnGoods
+		left join
+			c_pawn_product_cat productCat on pawnGoods.CAT_CODE = productCat.CAT_CODE
+		left join
+			c_pawn_product_cat productCatOne on productCat.P_CAT_CODE = productCatOne.CAT_CODE
+		left join
+			c_pawn_product_cat productCatTwo on productCatOne.P_CAT_CODE = productCatTwo.CAT_CODE
+		left join
+			info_ge_dict dict on pawnGoods.GOODS_STAT = dict.DICT_CODE
+			and dict.TYPE_CODE = 'PC_GOODS_STAT'
+		left join
+			C_PAWN_BRAND pawnBrand on pawnGoods.BRAND_CODE = pawnBrand.BRAND_CODE
+		left join
+			C_PAWN_SHOP pawnShop on pawnGoods.SHOP_CODE = pawnShop.SHOP_CODE
+		<!-- left join
+			I_PAWN_GOODS_ATTR_REL goodsAttrRel on pawnGoods.GOODS_ID = goodsAttrRel.GOODS_ID
+		left join
+			C_PAWN_ATTR_CONF pawnAttrConf on goodsAttrRel.ATTR_CODE = pawnAttrConf.ATTR_CODE -->
+		<where>
+			<if test="params.bo.keyWord != null and params.bo.keyWord != ''">
+				and GOODS_NAME like '%${params.bo.keyWord}%'
+			</if>
+			<if test="params.bo.operator != null and params.bo.operator != ''">
+				and INPUT_USER like '%${params.bo.operator}%'
+			</if>
+			<if test="params.bo.state != null and params.bo.state != ''">
+				and GOODS_STAT like '%${params.bo.state}%'
+			</if>
+			<if test="params.bo.inputTimeOne != null and params.bo.inputTimeOne != ''">
+				and INPUT_DATE > #{params.bo.inputTimeOne}
+			</if>
+			<if test="params.bo.inputTimeTwo != null and params.bo.inputTimeTwo != ''">
+				and INPUT_DATE &lt; #{params.bo.inputTimeTwo}
+			</if>
+		</where>
+	</select>
+
+	<!-- 加载分类一级下拉列表 -->
+	<select id="classificationLevel" resultType="com.huibo.pawn.bo.ProductCatBo">
+		select
+			CAT_CODE		catCode,
+			CAT_NAME		catName
+		from
+			C_PAWN_PRODUCT_CAT
+		where
+			CAT_LVL = '1'
+	</select>
+	
+	<!-- 加载分类二级下拉列表 -->
+	<select id="classificationOfTheSecondary" resultType="com.huibo.pawn.bo.ProductCatBo">
+		select
+			CAT_CODE		catCode,
+			CAT_NAME		catName
+		from
+			C_PAWN_PRODUCT_CAT
+		where
+			P_CAT_CODE = #{catCode}
+	</select>
+	
+	<!--  -->
+	<select id="modifyClassificationOfTheSecondaryTwo" resultType="com.huibo.pawn.bo.ProductCatBo">
+		select
+			CAT_CODE		catCode,
+			CAT_NAME		catName
+		from
+			C_PAWN_PRODUCT_CAT
+		where
+			CAT_CODE = #{catCode}
+	</select>
+	
+	<!-- 修改分类二级下拉列表 -->
+	<select id="modifyClassificationOfTheSecondary" resultType="com.huibo.pawn.bo.ProductCatBo">
+		select
+			CAT_CODE		catCode,
+			CAT_NAME		catName
+		from
+			C_PAWN_PRODUCT_CAT
+		where
+			CAT_NAME = #{catName}
+	</select>
+	
+	<!-- 加载分类三级下拉列表 -->
+	<select id="classificationOfThree" resultType="com.huibo.pawn.bo.ProductCatBo">
+		select
+			CAT_CODE		catCode,
+			CAT_NAME		catName
+		from
+			C_PAWN_PRODUCT_CAT
+		where
+			P_CAT_CODE = #{catCode}
+	</select>
+	
+	<!-- 修改分类三级下拉列表 -->
+	<select id="modifyClassificationOfThree" resultType="com.huibo.pawn.bo.ProductCatBo">
+		select
+			CAT_CODE		catCode,
+			CAT_NAME		catName
+		from
+			C_PAWN_PRODUCT_CAT
+		where
+			P_CAT_CODE = (select CAT_CODE from C_PAWN_PRODUCT_CAT where CAT_NAME = #{catName})
+	</select>
+	
+	<!-- 属性分类下拉列表 -->
+	<select id="attributeTypes" resultType="com.huibo.pawn.bo.AttrGroupBo">
+		select
+			attrGroup.GROUP_CODE			groupCode,
+			attrGroup.GROUP_NAME			groupName
+		from
+			C_PAWN_ATTR_GROUP attrGroup
+		left join
+			C_PAWN_ATTR_GROUP_CAT_REL attrGroupCatRel on attrGroup.GROUP_CODE = attrGroupCatRel.GROUP_CODE
+		left join
+			C_PAWN_PRODUCT_CAT productCat on attrGroupCatRel.CAT_CODE = productCat.CAT_CODE
+		where
+			productCat.CAT_CODE = #{catCode}
+	</select>
+	
+	<!-- 商品品牌下拉列表 -->
+	<select id="commodityBrand" resultType="com.huibo.pawn.bo.CPawnbrandBo">
+		select
+			pawnBrand.BRAND_CODE			brandCode,
+			pawnBrand.BRAND_NAME			brandName
+		from
+			C_PAWN_BRAND pawnBrand
+		left join
+			C_PAWN_BRAND_CAT_REL brandCatRel on pawnBrand.BRAND_CODE = brandCatRel.BRAND_CODE
+		left join
+			C_PAWN_PRODUCT_CAT productCat on brandCatRel.CAT_CODE = productCat.CAT_CODE
+		where 
+			productCat.CAT_CODE = #{catCode}
+	</select>
+	
+	<!-- 修改商品品牌下拉列表 -->
+	<select id="modifyCommodityBrand" resultType="com.huibo.pawn.bo.CPawnbrandBo">
+		select
+			pawnBrand.BRAND_CODE			brandCode,
+			pawnBrand.BRAND_NAME			brandName
+		from
+			C_PAWN_BRAND pawnBrand
+		where
+			BRAND_CODE = #{brandCode}
+	</select>
+	
+	<!-- 来源门店下拉列表 -->
+	<select id="sourceOfStores" resultType="com.huibo.pawn.bo.StoreInformationBo">
+		select
+			SHOP_CODE					shopCode,
+			SHOP_NAME					shopName
+		from
+			C_PAWN_SHOP
+	</select>
+	
+	<!-- 查询属性 -->
+	<select id="formattingProperties" resultType="com.huibo.pawn.bo.ConfBo">
+		select
+			attrConf.ATTR_CODE					attrCode,
+			attrConf.GROUP_CODE					groupCode,
+			attrConf.ATTR_NAME					attrName,
+			attrConf.ATTR_TYPE					attrType,
+			attrConf.OPTIONS					options
+		from
+			C_PAWN_ATTR_CONF attrConf
+		left join
+			C_PAWN_ATTR_GROUP attrGroup on attrConf.GROUP_CODE = attrGroup.GROUP_CODE
+		left join
+			C_PAWN_ATTR_GROUP_CAT_REL attrGroupCatRel on attrGroup.GROUP_CODE = attrGroupCatRel.GROUP_CODE
+		left join
+			C_PAWN_PRODUCT_CAT productCat on attrGroupCatRel.CAT_CODE = productCat.CAT_CODE
+		where
+			productCat.CAT_CODE = #{catCode}
+	</select>
+	
+	<!-- 查询商品属性可选值 -->
+	<select id="propertyDropDownList" resultType="com.huibo.pawn.bo.ConfBo">
+		select	
+			attrConf.ATTR_CODE					attrCode,
+			attrConf.GROUP_CODE					groupCode,
+			attrConf.ATTR_NAME					attrName,
+			attrConf.ATTR_TYPE					attrType,
+			attrConf.OPTIONS					options
+		from
+			C_PAWN_ATTR_CONF attrConf
+		where
+			attrConf.ATTR_CODE = #{attrCode}
+	</select>
+	
+	<!-- 商品图片 -->
+	<select id="commodityImages" resultType="com.huibo.pawn.bo.ProductCatBo">
+		select
+			CAT_CODE				catCode,
+			CAT_NAME				catName,
+			P_CAT_CODE				pCatCode,
+			CAT_LVL					catLvl,
+			CAT_DESC				catDesc,
+			EVAL_PIC_DEF			evalPicDef
+		from
+			C_PAWN_PRODUCT_CAT
+		where
+			CAT_CODE = #{catCode}
+	</select>
+	
+	
+	
+	<!-- 新增商品信息 -->
+	<insert id="addGoodsForm">
+		insert
+		into
+			I_PAWN_GOODS
+				(
+					GOODS_ID,
+					SHOP_CODE,
+					INPUT_DATE,
+					GOODS_NAME,
+					BRAND_CODE,
+					FIRST_PRICE,
+					GOODS_DESC,
+					CAT_CODE,
+					GOODS_STAT,
+					SUB_CAT_CODE,
+					DETAIL_CAT_CODE
+				)
+		value
+				(
+					#{goodsId},
+					#{shopCode},
+					#{inputDate},
+					#{goodsName},
+					#{brandCode},
+					#{firstPrice},
+					#{goodsDesc},
+					#{detailCatCode},
+					'0',
+					#{subCatCode},
+					#{detailCatCode}
+				)
+	</insert>
+	
+	<!-- 新增商品属性 -->
+	<insert id="addProductAttributeForm">
+		insert
+		into
+			I_PAWN_GOODS_ATTR_REL
+				(
+					ATTR_CODE,
+					GOODS_ID,
+					ATTR_VALUE
+				)
+		values
+			
+				(
+					#{attrCode},
+					#{goodsId},
+					#{attrValue}
+				)
+	</insert>
+	
+	<!-- 修改查询 -->
+	<select id="modifyProductList" resultType="com.huibo.pawn.bo.GoodsAttrRelBo">
+		select
+			ATTR_CODE      	attrCode,
+			GOODS_ID		goodsId,
+			ATTR_VALUE		attrValue
+		from
+			I_PAWN_GOODS_ATTR_REL
+		where
+			GOODS_ID = #{goodsId}
+	</select>
+	
+	<!-- 删除商品信息和商品的属性 -->
+	<delete id="delProductList">
+		delete
+			I_PAWN_GOODS,I_PAWN_GOODS_ATTR_REL
+		from
+			I_PAWN_GOODS
+		left join
+			I_PAWN_GOODS_ATTR_REL on I_PAWN_GOODS.GOODS_ID = I_PAWN_GOODS_ATTR_REL.GOODS_ID
+		where
+			I_PAWN_GOODS_ATTR_REL.GOODS_ID
+		in
+			<foreach collection="array" item="arr" open="(" close=")" separator=",">
+		  		#{arr}
+			</foreach>	
+	</delete>
+	
+	<!-- 删除商品的图片信息 -->
+	<delete id="delProductListImg">
+		delete
+			info_ge_resource,info_ge_resref
+		from
+			info_ge_resource
+		left join
+			info_ge_resref on info_ge_resource.RES_ID = info_ge_resref.RES_ID
+		where
+			info_ge_resref.INFO_ID
+		in
+			<foreach collection="array" item="arr" open="(" close=")" separator=",">
+		  		#{arr}
+			</foreach>	
+	</delete>
+	
+	<!-- 删除商品的鉴定和评估记录 -->
+	<delete id="delLog">
+		delete
+			i_pawn_goods_appraise_log,i_pawn_goods_identify_log
+		from
+			i_pawn_goods_appraise_log
+		left join
+			i_pawn_goods_identify_log on i_pawn_goods_appraise_log.GOODS_ID = i_pawn_goods_identify_log.GOODS_ID
+		where
+			i_pawn_goods_appraise_log.GOODS_ID
+		in
+			<foreach collection="array" item="arr" open="(" close=")" separator=",">
+		  		#{arr}
+			</foreach>	
+	</delete>
+	
+	<!-- 查找附件表最大的编号 -->
+<select id="getPawnAttachCodeImg" resultType="Integer">
+	SELECT
+		IFNULL(MAX(RES_ID),0)
+	FROM
+		info_ge_resource
+</select>
+
+<!-- 增加商品的图标 -->
+<insert id="addPawnAttachPoImg">
+	insert
+	into
+		info_ge_resource(
+			RES_ID ,
+			RES_FILE ,
+			FILE_SIZE ,
+			MIME_TYPE 
+		)
+	values(
+		#{resId} ,
+		#{resFile} ,
+		#{fileSize} ,
+		#{mimeType}
+	)
+</insert>
+
+<!-- 让附件和商品相关联 -->
+<insert id="addPawnAttachImg">
+	insert
+	into
+		info_ge_resref(
+			RES_ID ,
+			INFO_ID ,
+			INFO_TYPE
+		)
+		values(
+			${resId} ,
+			${catCode} ,
+			1004
+		)
+</insert>
+	
+	<!-- 提交 -->
+	<update id="submitProductList">
+		update
+			I_PAWN_GOODS
+		set
+			INPUT_USER = #{inputUser},
+			GOODS_STAT = '1'
+		where
+			GOODS_ID = #{goodsId}
+	</update>
+	
+	<!-- 查询商品属性 -->
+	<select id="authenticateProductList" resultType="com.huibo.pawn.bo.IpawnGoodsBo">
+		select
+			pawnAttrConf.ATTR_NAME			attrName,
+			goodsAttrRel.ATTR_VALUE			attrValue,
+			pawnAttrConf.ATTR_TYPE			attrType,
+			goodsAttrRel.ATTR_CODE			attrCode
+		from
+			I_PAWN_GOODS_ATTR_REL goodsAttrRel
+		left join
+			C_PAWN_ATTR_CONF pawnAttrConf on goodsAttrRel.ATTR_CODE = pawnAttrConf.ATTR_CODE
+		where
+			goodsAttrRel.GOODS_ID = #{goodsId}
+	</select>
+	
+	<!-- 商品历史鉴定 -->
+	<select id="historicalAppraisal" resultType="com.huibo.pawn.bo.IdentificationOfRecordsBo">
+		select
+			IDENTIFY_ID				identifyId,
+			IDENTIFY_RESULT			identifyResult,
+			GOODS_QUALITY			goodsQuality,
+			CREATE_BY				createBy,
+			CREATE_TIME				createTime,
+			IDENTIFY_DESC			identifyDesc
+		from
+			I_PAWN_GOODS_IDENTIFY_LOG
+		where
+			GOODS_ID = #{goodsId}
+	</select>
+	
+	<!-- 鉴定为正品 -->
+	<insert id="qualityGoods">
+		insert
+		into
+			I_PAWN_GOODS_IDENTIFY_LOG
+				(
+					IDENTIFY_ID,
+					GOODS_ID,
+					GOODS_QUALITY,
+					IDENTIFY_DESC,
+					IDENTIFY_RESULT,
+					CREATE_BY,
+   					CREATE_TIME
+				)
+			values
+				(
+					nextval("SEQ_baseinfo"),
+					#{goodsId},
+					#{goodsQuality},
+					#{identifyDesc},
+					'正品',
+					#{createBy},
+					now()
+				)
+	</insert>
+	
+	<!-- 鉴定为假货 -->
+	<insert id="fake">
+		insert
+		into
+			I_PAWN_GOODS_IDENTIFY_LOG
+				(
+					IDENTIFY_ID,
+					GOODS_ID,
+					GOODS_QUALITY,
+					IDENTIFY_DESC,
+					IDENTIFY_RESULT,
+					CREATE_BY,
+   					CREATE_TIME
+				)
+			values
+				(
+					nextval("SEQ_baseinfo"),
+					#{goodsId},
+					#{goodsQuality},
+					#{identifyDesc},
+					'假货',
+					#{createBy},
+					now()
+				)
+	</insert>
+	
+	<!-- 鉴定为资料不全 -->
+	<insert id="insufficientInformation">
+		insert
+		into
+			I_PAWN_GOODS_IDENTIFY_LOG
+				(
+					IDENTIFY_ID,
+					GOODS_ID,
+					GOODS_QUALITY,
+					IDENTIFY_DESC,
+					IDENTIFY_RESULT,
+					CREATE_BY,
+   					CREATE_TIME
+				)
+			values
+				(
+					nextval("SEQ"),
+					#{goodsId},
+					#{goodsQuality},
+					#{identifyDesc},
+					'残缺',
+					#{createBy},
+					now()
+				)
+	</insert>
+	
+	<!-- 将商品的状态改为待评估以及修改鉴定人 -->
+	<update id="upGoodsStat">
+		update
+			I_PAWN_GOODS
+		set
+			GOODS_STAT = '2',
+			SURVEYOR = #{createBy}
+		where
+			GOODS_ID = #{goodsId}
+	</update>
+	
+	<!-- 商品鉴定查询 -->
+	<select id="assessProductList" resultType="com.huibo.pawn.bo.IdentificationOfRecordsBo">
+		select
+			max(IDENTIFY_ID)		identifyId,
+			GOODS_ID				goodsId,
+			IDENTIFY_RESULT			identifyResult,
+			GOODS_QUALITY			goodsQuality,
+			CREATE_BY				createBy,
+			CREATE_TIME				createTime,
+			IDENTIFY_DESC			identifyDesc
+		from
+			I_PAWN_GOODS_IDENTIFY_LOG
+		where
+			GOODS_ID = #{goodsId}
+	</select>
+	
+	<!-- 商品估价 -->
+	<insert id="goodsAssessmentForm">
+		insert
+		into
+			I_PAWN_GOODS_APPRAISE_LOG
+				(
+					APPRAISE_ID,
+					GOODS_ID,
+					OFFICIAL_PRICE,
+					VALUATION_PRICE,
+					PAWN_PRICE,
+					RCHASE_PRICE,
+					SELLING_PRICE,
+					RENTAL_PRICE,
+					APPRAISE_DESC,
+					CREATE_BY,
+					CREATE_TIME
+				)
+			values
+				(
+					nextval("SEQ"),
+					#{goodsId},
+					#{officialPrice},
+					#{valuationPrice},
+					#{pawnPrice},
+					#{rchasePrice},
+					#{sellingPrice},
+					#{rentalPrice},
+					#{appraiseDesc},
+					#{createBy},
+					now()
+				)
+	</insert>
+	
+	<!-- 将商品状态改为已评估以及修改评估人 -->
+	<update id="evaluate">
+		update
+			I_PAWN_GOODS
+		set
+			GOODS_STAT = '3',
+			ASSESSOR = #{createBy}
+		where
+			GOODS_ID = #{goodsId}
+	</update>
+	
+	<!-- 商品估价历史记录 -->
+	<select id="assessmentRecords" resultType="com.huibo.pawn.bo.AssessmentBo">
+		select
+			APPRAISE_ID				appraiseId,	
+			OFFICIAL_PRICE			officialPrice,
+			VALUATION_PRICE			valuationPrice,
+			CREATE_BY				createBy,
+			CREATE_TIME				createTime,
+			APPRAISE_DESC			appraiseDesc
+		from
+			I_PAWN_GOODS_APPRAISE_LOG
+		where
+			GOODS_ID = #{goodsId}
+	</select>
+	
+	<!-- 查找附件表最大的编号 -->
+	<select id="getPawnAttachCode" resultType="Integer">
+		SELECT
+			IFNULL(MAX(RES_ID),0)
+		FROM
+			info_ge_resource
+	</select>
+	
+	<!-- 增加商品图片 -->
+	<insert id="addPawnAttachPo">
+		insert
+		into
+			info_ge_resource(
+				RES_ID ,
+				RES_FILE ,
+				FILE_SIZE ,
+				MIME_TYPE ,
+				RES_DESC
+			)
+		values(
+			#{resId} ,
+			#{resFile} ,
+			#{fileSize} ,
+			#{mimeType} ,
+			#{resDesc}
+		)
+	</insert>
+	
+	<!-- 让附件和商品大类相关联 -->
+	<insert id="addPawnAttach">
+		insert
+		into
+			info_ge_resref(
+				RES_ID ,
+				INFO_ID ,
+				INFO_TYPE
+			)
+			values(
+				#{b} ,
+				#{goodsId} ,
+				1004
+			)
+	</insert>
+	
+	<!-- 根据商品ID查询商品信息 -->
+	<select id="shopInfoSerach" resultType="com.huibo.pawn.bo.IpawnGoodsBo">
+		select
+			pawnGoods.GOODS_ID          	goodsId,
+			pawnGoods.GOODS_NAME			goodsName,
+			productCat.CAT_NAME				detailCatCode,
+			productCatOne.CAT_NAME			subCatCode,
+			productCatTwo.CAT_NAME			catCode,
+			pawnGoods.INPUT_USER			inputUser,
+			pawnGoods.SURVEYOR				surveyor,
+			pawnGoods.ASSESSOR				assessor,
+			pawnGoods.INPUT_DATE			inputDate,
+			dict.DICT_DESC					goodsStat,
+			pawnShop.SHOP_NAME				shopCode,
+			pawnBrand.BRAND_NAME			brandCode,
+			pawnGoods.FIRST_PRICE			firstPrice,
+			pawnGoods.GOODS_DESC			goodsDesc
+		from
+			I_PAWN_GOODS pawnGoods
+		left join
+			c_pawn_product_cat productCat on pawnGoods.CAT_CODE = productCat.CAT_CODE
+		left join
+			c_pawn_product_cat productCatOne on productCat.P_CAT_CODE = productCatOne.CAT_CODE
+		left join
+			c_pawn_product_cat productCatTwo on productCatOne.P_CAT_CODE = productCatTwo.CAT_CODE
+		left join
+			info_ge_dict dict on pawnGoods.GOODS_STAT = dict.DICT_CODE
+			and dict.TYPE_CODE = 'PC_GOODS_STAT'
+		left join
+			C_PAWN_BRAND pawnBrand on pawnGoods.BRAND_CODE = pawnBrand.BRAND_CODE
+		left join
+			C_PAWN_SHOP pawnShop on pawnGoods.SHOP_CODE = pawnShop.SHOP_CODE
+		where
+			pawnGoods.GOODS_ID = #{goodsId}
+	</select>
+	
+	<!-- 修改查询图片 -->
+	<select id="queryImgs" resultType="com.huibo.pawn.po.PawnAttachPo">
+			select
+				RES_DESC	resDesc,
+				RES_FILE	resFile,
+				RES_ID		resId
+			from
+				info_ge_resource
+			where
+				RES_ID in (select RES_ID from info_ge_resref where INFO_ID = #{goodsId} and INFO_TYPE = '1004')
+	</select>
+	
+	<!-- 根据商品ID删除属性 -->
+	<delete id="delNature">
+		delete
+			i_pawn_goods_attr_rel
+		from
+			i_pawn_goods_attr_rel
+		where
+			GOODS_ID = #{goodsId}
+	</delete>
+	
+	<!-- 修改属性 -->
+	<insert id="modifyProductAttributeForm">
+		insert
+		into
+			I_PAWN_GOODS_ATTR_REL
+				(
+					ATTR_CODE,
+					GOODS_ID,
+					ATTR_VALUE
+				)
+		values
+			
+				(
+					#{attrCode},
+					#{goodsId},
+					#{attrValue}
+				)
+	</insert>
+	
+	<!-- 修改商品信息 -->
+	<update id="modifyGoodsForm">
+		update
+			i_pawn_goods
+		set
+			SHOP_CODE = #{shopCode},
+			INPUT_DATE = #{inputDate},
+			GOODS_NAME = #{goodsName},
+			BRAND_CODE = #{brandCode},
+			FIRST_PRICE = #{firstPrice},
+			GOODS_DESC = #{goodsDesc},
+			CAT_CODE = #{detailCatCode},
+			GOODS_STAT = #{goodsStatName},
+			SUB_CAT_CODE = #{subCatCode},
+			DETAIL_CAT_CODE = #{detailCatCode}
+		where
+			GOODS_ID = #{goodsId}
+	</update>
+	
+	<!-- 删除图片 -->
+	<delete id="delImgs">
+		delete
+			info_ge_resource,info_ge_resref
+		from
+			info_ge_resource
+		left join
+			info_ge_resref on info_ge_resource.RES_ID = info_ge_resref.RES_ID
+		where
+			info_ge_resource.RES_ID = #{resId}
+	</delete>
+	
+	<!-- 修改图片 -->
+	<insert id="modifyPawnAttachPo">
+		insert
+		into
+			info_ge_resource(
+				RES_ID ,
+				RES_FILE ,
+				FILE_SIZE ,
+				MIME_TYPE ,
+				RES_DESC
+			)
+		values(
+			#{resId} ,
+			#{resFile} ,
+			#{fileSize} ,
+			#{mimeType} ,
+			#{resDesc}
+		)
+	</insert>
+	
+	<!-- 修改让附件和商品大类相关联 -->
+	<insert id="modifyPawnAttach">
+		insert
+		into
+			info_ge_resref(
+				RES_ID ,
+				INFO_ID ,
+				INFO_TYPE
+			)
+			values(
+				#{resId} ,
+				#{goodsId} ,
+				1004
+			)
+	</insert>
+	
+	<!-- 新增商品序号验证 -->
+	<select id="shopVerify" resultType="Integer" parameterType="String">
+		select
+			count(*)
+		from
+			i_pawn_goods
+		<where>
+			<if test="goodsId != null and goodsId !=''">
+				GOODS_ID = #{goodsId}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 修改查询分类一级编号 -->
+	<select id="stairOne" resultType="com.huibo.pawn.bo.ProductCatBo">
+		select
+			CAT_CODE				catCode
+		from
+			c_pawn_product_cat
+		where
+			CAT_CODE = (select P_CAT_CODE from c_pawn_product_cat where CAT_CODE = #{catCode})
+	</select>
+</mapper>

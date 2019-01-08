@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huibo.pawn.dao.ConfDao">
+
+<!-- 初始化加载数据 -->
+<select id="confTable" resultType="com.huibo.pawn.po.ConfPo">
+	select
+		c.ATTR_CODE 		attrCode ,
+		c.ATTR_NAME			attrName ,
+		c.GROUP_CODE		groupCode ,
+		g.GROUP_NAME		groupName ,
+		c.ATTR_TYPE			attrType ,
+		c.OPTIONS			options
+	from
+		c_pawn_attr_conf c
+	left join
+		c_pawn_attr_group  g
+	on
+		g.GROUP_CODE = c.GROUP_CODE
+	where
+		c.GROUP_CODE = #{params.bo.groupCode}
+	<if test="params.bo.keyWord != null and params.bo.keyWord != ''">
+		and ( c.ATTR_CODE like '%${params.bo.keyWord}%'
+			or c.ATTR_NAME  like '%${params.bo.keyWord}%'
+			or c.OPTIONS like '%${params.bo.keyWord}%'
+		)
+	</if>
+</select>
+
+<!-- 新增属性的SQL -->
+<insert id="addConf">
+	insert
+	into
+		c_pawn_attr_conf(
+			ATTR_CODE ,
+			ATTR_NAME ,
+			GROUP_CODE ,
+			ATTR_TYPE ,
+			OPTIONS
+		)
+	values(
+		#{attrCode} ,
+		#{attrName} ,
+		#{groupCode} ,
+		#{attrType} ,
+		#{options}
+	)
+</insert>
+
+<!-- 编号重复验证 -->
+<select id="validatePriorityCode" resultType="Integer">
+	SELECT 
+	COUNT(*) 
+	FROM 
+		c_pawn_attr_conf
+	<where>
+		<if test="attrCode != null and attrCode != ''">
+			and ATTR_CODE = #{attrCode}
+		</if>
+	</where>
+</select>
+
+<!-- 根据编号获取信息 -->
+<select id="getConfByAttrCode" resultType="com.huibo.pawn.po.ConfPo">
+	select
+		c.ATTR_CODE 		attrCode ,
+		c.ATTR_NAME			attrName ,
+		c.GROUP_CODE		groupCode ,
+		g.GROUP_NAME		groupName ,
+		c.ATTR_TYPE			attrType ,
+		c.OPTIONS			options
+	from
+		c_pawn_attr_conf c
+	left join
+		c_pawn_attr_group  g
+	on
+		g.GROUP_CODE = c.GROUP_CODE
+	where
+		c.ATTR_CODE = ${attrCode}
+	
+</select>
+
+<!-- 修改属性的方法 -->
+<update id="updConf">
+	update
+		c_pawn_attr_conf
+	set
+		ATTR_NAME = #{attrName} ,
+		ATTR_TYPE = #{attrType} ,
+		OPTIONS = #{options}
+	where
+		ATTR_CODE = #{attrCode} 
+</update>
+
+<!-- 删除属性的SQL -->
+<delete id="delConf">
+	delete
+	from
+		c_pawn_attr_conf
+	where
+		ATTR_CODE in (${attrCode})
+</delete>
+</mapper>

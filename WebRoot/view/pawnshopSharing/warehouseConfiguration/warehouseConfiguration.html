@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<title>仓储配置</title>
+		<meta charset="UTF-8">
+		<meta name="content-type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" type="text/css" href="../../../css/common/main.css" />
+		<link rel="stylesheet" type="text/css" href="../../../css/themes/default/easyui.css" />
+		<link rel="stylesheet" type="text/css" href="../../../css/themes/icon.css" />
+		<script type="text/javascript" src="../../../js/jquery.min.js"></script>
+		<script type="text/javascript" src="../../../js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="../../../js/easyui-lang-zh_CN.js"></script>
+		<script type="text/javascript" src="js/warehouseConfiguration.js"></script>
+		<style>
+		/* 改变datagrid标题的高度，使datagrid内部不出现滚动条 */
+		 .datagrid-header-row{
+		 	height:24px;
+		 }
+		</style>
+	</head>
+
+	<body class="easyui-layout" style="">
+		<div data-options="region:'north',border:false" style="height:80px">
+			<table class="btbHead">
+				<tr>
+					<td style='width: 25%;'>
+						<img src='../../../images/common/title.gif' align='absmiddle'/>仓库列表
+					</td>
+					<td style="text-align: right;">
+						<a href="#" onclick="loaddataToTab()" id="searchButton" class="easyui-linkbutton" iconCls="icon-search">&nbsp;查&nbsp;&nbsp;询&nbsp;</a>
+						<a href="#" onclick="AOFController(1)" id="addButton" class="easyui-linkbutton" iconCls="icon-add">&nbsp;新&nbsp;&nbsp;增&nbsp;</a>
+						<a href="#" onclick="AOFController(0)" id="modifyButton" class="easyui-linkbutton" iconCls="icon-edit">&nbsp;修&nbsp;&nbsp;改&nbsp;</a>
+						<a href="#" onclick="delWarehouse()" id="removeButton" class="easyui-linkbutton" iconCls="icon-remove">&nbsp;删&nbsp;&nbsp;除&nbsp;</a>
+					</td>
+				</tr>
+			</table>
+			<form id="selectWareHouseForm" class="easyui-form">
+				<!-- 查询 -->
+				<table class="btbForm">
+					<tr>
+						<td colspan="2">
+							模糊查询&nbsp;<input class="easyui-textbox" id="keyWord" name="keyWord"  data-options="prompt:'输入关键字'" style="width: 160px;"/>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							状态&nbsp;<input name="whStateId" id="WareHouseStateNameSear" class="text"  data-options="panelHeight:'auto'" />
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		<div style="margin-top:82px">
+		<table id="showWareHouseTable" class="easyui-datagrid" data-options="fitColumns:true,
+	autoRowHeight:true,
+	striped:true,
+	loadMsg:'正在加载数据中，请等一等~',
+	pagination:true,
+	pageList:[5,10,15,20],
+	pageSize:5" style="width:100%;">  
+			<thead>
+				<tr>
+					<th data-options="field:'whCode',align:'center',halign:'center',sortable:'true'" style="width:13%">仓库编号</th>
+					<th data-options="field:'whName',align:'center',halign:'center'" style="width:13%">仓库名称</th>
+					<th data-options="field:'contactName',align:'center',halign:'center'" style="width:13%">负责人</th>
+					<th data-options="field:'phoneNo',align:'center',halign:'center'" style="width:18%" >联系方式</th>
+					<th data-options="field:'address',halign:'center',align:'center'" style="width:18%" >地址</th>
+					<th data-options="field:'relShop',halign:'center',align:'center'" style="width:18%" >关联门店</th>
+					<th data-options="field:'11',halign:'center',align:'center',formatter:updStat" style="width:8%" >状态</th>
+					
+				</tr>
+			</thead>
+		</table>
+		</div>
+		<!-- 显示新增修改仓库容器 -->
+			<div id="AOFWareHouseContainer">
+				
+			</div>
+		
+		
+  </body>
+</html>

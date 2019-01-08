@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>渠道商管理</title>
+
+		<meta name="content-type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" type="text/css" href="../../../css/common/main.css" />
+		<link rel="stylesheet" type="text/css" href="../../../css/themes/default/easyui.css" />
+		<link rel="stylesheet" type="text/css" href="../../../css/themes/icon.css" />
+		<script type="text/javascript" src="../../../js/jquery.min.js"></script>
+		<script type="text/javascript" src="../../../js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="channelBusiness.js"></script>
+
+</head>
+<body>
+
+<div id="stb">
+
+	<!-- 增删改查 菜单区域 -->
+	<table class="btbHead">
+		<tr>
+			<td style='width: 25%;'>
+				<img src='../../../images/common/title.gif' align='absmiddle'/>缺陷状态
+			</td>
+			<td style="text-align: right;">
+				<a class="easyui-linkbutton" data-options="iconCls:'icon-search'" onClick="queryChannel()"> &nbsp;查&nbsp;&nbsp;询&nbsp;</a>
+				<a class="easyui-linkbutton" data-options="iconCls:'icon-add'"    onClick="addChannel()">   &nbsp;新&nbsp;&nbsp;增&nbsp;</a>
+				<a class="easyui-linkbutton" data-options="iconCls:'icon-edit'"   onClick="modifyChannel()">&nbsp;修&nbsp;&nbsp;改&nbsp;</a>
+				<a class="easyui-linkbutton" data-options="iconCls:'icon-remove'" onClick="removeChannel()">&nbsp;删&nbsp;&nbsp;除&nbsp;</a>
+			</td>
+		</tr>
+	</table>
+	
+	<!-- 搜索表单区域 -->
+	<form id="queryForm">
+		<table class="btbForm">
+			<tr>
+				<td>
+					关键字查询：&nbsp;<input id="keyWord" name="keyWord" class="easyui-textbox" data-options="prompt:'请输入会员名、操作人查询'" style="width:230px;"/>
+				</td>
+			</tr>
+		</table>
+	</form>
+	
+	<!-- 定义外边距 -->
+  	<div style="margin-top:5px"></div>
+  	
+</div> 	
+  	
+  	<!-- 核心表格数据显示区域 -->
+	<div>
+		<table id="channelTable" class="easyui-datagrid" style="width:98%;" data-options="pagination:true,pageList:[5,10,15,20],pageSize:20,striped:true,toolbar:'#stb'">
+			<thead>
+				<tr>
+					<!-- 用于选择 -->
+					<th data-options="field:'a',checkbox:true,align:'center'" style="width:5%"></th>
+					<!-- 序号 渠道编号  -->
+					<th data-options="field:'channelCode',align:'center',halign:'center',sortable:'true'" style="width:10%">序号</th>
+					<!-- 渠道名 -->
+					<th data-options="field:'channelName',align:'center',halign:'center',sortable:'true'" style="width:20%">渠道名</th>
+					<!-- 手机 -->
+					<th data-options="field:'mobile',align:'center',halign:'center',sortable:'true'" style="width:15%" >手机</th>
+					<!-- 累计充值 -->
+					<th data-options="field:'totalCharge',halign:'center',align:'center',sortable:'true'" style="width:13%" >累计充值</th>
+					<!-- 会员数量-->
+					<th data-options="field:'memberCount',halign:'center',align:'center',sortable:'true'" style="width:10%" >会员数量</th>
+					<!-- 状态 -->
+					<th data-options="field:'channelState',halign:'center',align:'center',sortable:'true',formatter:isUsedFormatter" style="width:15%" >状态</th>
+					<!-- 禁用启用 -->
+					<th data-options="field:'detail',align:'center',formatter:formatterDo" style="width:10%">操作</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+	
+  	<!-- 增加修改用户信息容器 -->
+	<div id="channel_add_modify_div" style="display:none;">
+	</div>
+	
+</body>
+</html>

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.2//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huibo.pawn.dao.CPawnbrandDao">
+	<!-- 加载数据网格和搜索 -->
+	<select id="brandManagementSearch" resultType="com.huibo.pawn.bo.CPawnbrandBo">
+		select
+			 pawnBrand.BRAND_CODE        brandCode,        	<!-- 品牌编号   -->  
+			 pawnBrand.BRAND_NAME        brandName,   	 	<!-- 品牌名称	 -->
+			 pawnBrand.F_LETTER          fLetter,  		 	<!-- 品牌首字母 -->
+			 pawnBrand.BRAND_DESC        brandDesc,			<!-- 品牌简介 -->  
+			 pawnBrand.IS_SHOW           isShow,			<!-- 是否显示编号   -->
+			 geDict.DICT_DESC            isShowName,		<!-- 是否显示名称 -->
+			 pawnBrand.SORT_NO  		 sortNo				<!-- 排序 -->
+		from
+			C_PAWN_BRAND pawnBrand
+		left join
+			info_ge_dict geDict on pawnBrand.IS_SHOW = geDict.DICT_CODE
+			AND geDict.TYPE_CODE = "PC_IS_SHOW"
+		<where>
+			<if test="params.bo.keyWord != null and params.bo.keyWord != ''">
+				and BRAND_NAME like '%${params.bo.keyWord}%'
+				or F_LETTER like '%${params.bo.keyWord}%'
+			</if>
+		</where>
+	</select>
+	
+	<!-- 加载新增品牌界面中的待选商品大类的数据 -->
+	<select id="loadProductCategories" resultType="com.huibo.pawn.bo.CPawnProductCatBo">
+		select
+			productCat.CAT_CODE          catCode,      	<!-- 分类编号 -->
+		    productCat.CAT_NAME          catName,  		<!-- 分类名称 -->
+		    productCat.P_CAT_CODE        pCatCode,			<!-- 上级分类 -->
+		    productCat.CAT_LVL           catLvl,  			<!-- 分类级次 -->
+		    productCat.CAT_ROUTE         catRoute, 		<!-- 分类路径 -->
+		    productCat.UNIT              unit,  			<!-- 数量单位 -->
+		    productCat.CAT_DESC          catDesc,  		<!-- 分类描述 -->
+		    productCat.EVAL_PIC_DEF      evalPicDef,    	<!-- 鉴定图定义 -->
+		    productCat.IS_SHOW           isShow,       	<!-- 是否显示 -->
+		    productCat.SORT_NO  		  sortNo			<!-- 排序 -->
+		from
+			C_PAWN_PRODUCT_CAT productCat
+		left join
+			info_ge_dict geDict on productCat.IS_SHOW = geDict.DICT_CODE
+			and geDict.TYPE_CODE = "PC_IS_SHOW"
+		WHERE
+			productCat.CAT_LVL = '1'
+	</select>
+	
+	<!-- 加载修改品牌界面中的待选商品大类的数据 -->
+	<select id="modifyLoadProductCategories" resultType="com.huibo.pawn.bo.CPawnProductCatBo">
+		select
+			productCat.CAT_CODE          catCode,      	<!-- 分类编号 -->
+		    productCat.CAT_NAME          catName  		<!-- 分类名称 -->
+		from
+			C_PAWN_BRAND_CAT_REL catRel
+		left join
+			C_PAWN_PRODUCT_CAT productCat on catRel.CAT_CODE = productCat.CAT_CODE
+		where
+			productCat.CAT_CODE not in (select CAT_CODE from C_PAWN_BRAND_CAT_REL where BRAND_CODE = #{brandCode})
+		GROUP BY
+			productCat.CAT_CODE
+	</select>
+	
+	<!-- 加载修改品牌界面中的适用商品大类的数据 -->
+	<select id="modifyApplicableCommodities" resultType="com.huibo.pawn.bo.CPawnbrandBo">
+		select
+			 pawnBrand.BRAND_CODE        brandCode,
+			 catRel.CAT_CODE			 catCode,
+			 productCat.CAT_NAME         catName
+		from
+			C_PAWN_BRAND pawnBrand
+		left join
+			C_PAWN_BRAND_CAT_REL catRel on pawnBrand.BRAND_CODE = catRel.BRAND_CODE
+		left join
+			C_PAWN_PRODUCT_CAT productCat on catRel.CAT_CODE = productCat.CAT_CODE
+		where
+			pawnBrand.BRAND_CODE = #{brandCode}
+	</select>
+	
+	<!-- 新增品牌 -->
+	<insert id="brandManagementSave">
+		insert
+		into
+			C_PAWN_BRAND 
+				(
+					BRAND_CODE,
+					BRAND_NAME,
+					F_LETTER,
+					SORT_NO,
+					IS_SHOW
+				)
+		values
+				(
+					#{brandCode},
+					#{brandName},
+					#{fLetter},
+					#{sortNo},
+					'1'
+				)
+	</insert>
+	
+	<!-- 新增品牌适用分类 -->
+	<insert id="brandClassification">
+		insert
+		into
+			C_PAWN_BRAND_CAT_REL
+				(
+					BRAND_CODE,
+					CAT_CODE
+				) 
+		VALUES
+				<foreach collection="arr" separator="," item="arr" >
+					(#{brandCode},
+					#{arr})
+				</foreach>	
+	</insert>
+	
+	<!-- 修改品牌信息填坑 -->
+	<select id="modifyBrandManagement" resultType="com.huibo.pawn.bo.CPawnbrandBo">
+		select
+			 pawnBrand.BRAND_CODE        brandCode,        	<!-- 品牌编号   -->  
+			 pawnBrand.BRAND_NAME        brandName,   	 	<!-- 品牌名称	 -->
+			 pawnBrand.F_LETTER          fLetter,  		 	<!-- 品牌首字母 -->
+			 pawnBrand.BRAND_DESC        brandDesc,			<!-- 品牌简介 -->  
+			 pawnBrand.IS_SHOW           isShow,			<!-- 是否显示编号   -->
+			 geDict.DICT_DESC            isShowName,		<!-- 是否显示名称 -->
+			 pawnBrand.SORT_NO  		 sortNo,			<!-- 排序 -->
+			 brandCatRel.CAT_CODE		 catCode			<!-- 分类编号 -->
+		from
+			C_PAWN_BRAND pawnBrand
+		left join
+			info_ge_dict geDict on pawnBrand.IS_SHOW = geDict.DICT_CODE
+			AND geDict.TYPE_CODE = "PC_IS_SHOW"
+		left join
+			C_PAWN_BRAND_CAT_REL brandCatRel on pawnBrand.BRAND_CODE = brandCatRel.BRAND_CODE
+		where
+			pawnBrand.BRAND_CODE = #{brandCode}
+	</select>
+	
+	<!-- 删除品牌 -->
+	<delete id="delBrandManagement">
+		delete 
+			C_PAWN_BRAND,C_PAWN_BRAND_CAT_REL
+		from
+			C_PAWN_BRAND
+		left join
+			C_PAWN_BRAND_CAT_REL on C_PAWN_BRAND.BRAND_CODE = C_PAWN_BRAND_CAT_REL.BRAND_CODE
+		where
+			C_PAWN_BRAND.BRAND_CODE
+		in
+			<foreach collection="array" item="id" open="(" close=")" separator=",">
+				#{id}
+			</foreach>
+	</delete>
+	
+	<!-- 修海显示状态 -->
+	<update id="forbiddenBrandManagement">
+		update
+			C_PAWN_BRAND
+		set
+			IS_SHOW = #{isShow}
+		where
+			BRAND_CODE = #{brandCode}
+	</update>
+	
+	<!-- 新增品牌编号非重复验证 -->
+	<select id="brandManagementValidation" resultType="Integer" parameterType="String">
+		select
+			count(*)
+		from
+			C_PAWN_BRAND
+		<where>
+			<if test="brandCode != null and brandCode !=''"></if>
+				and BRAND_CODE = #{brandCode}
+		</where>	
+	</select>
+	
+	<!-- 新增品牌名称非重复验证 -->
+	<select id="addBrandNameVerification" resultType="Integer" parameterType="String">
+		select
+			count(*)
+		from
+			C_PAWN_BRAND
+		<where>
+			<if test="brandName != null and brandName !=''"></if>
+				and BRAND_NAME = #{brandName}
+		</where>
+	</select>
+	
+	<!-- 修改品牌名称非重复验证 -->
+	<select id="modifyBrandNameVerification" resultType="Integer" parameterType="String">
+		select
+			count(*)
+		from
+			C_PAWN_BRAND
+		<where>
+			<if test="brandName != null and brandName !=''"></if>
+				and BRAND_NAME = #{brandName}
+		</where>
+	</select>
+	
+	<!-- 删除适用品牌分类 -->
+	<delete id="delbrandClassification">
+		delete
+			C_PAWN_BRAND_CAT_REL
+		from
+			C_PAWN_BRAND_CAT_REL
+		where
+			BRAND_CODE = #{brandCode}
+	</delete>
+	
+	<!-- 修改品牌信息 -->
+	<update id="modifyBrandManagementSave">
+		update
+			C_PAWN_BRAND
+		set
+			BRAND_NAME = #{brandName},
+			F_LETTER = #{fLetter},
+			SORT_NO = #{sortNo}
+		where
+			BRAND_CODE = #{brandCode}
+	</update>
+	
+	<!--  -->
+</mapper>

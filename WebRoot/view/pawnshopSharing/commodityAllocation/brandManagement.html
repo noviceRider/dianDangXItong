@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>数据访问类型</title>
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="../../../css/common/main.css"/>
+	<link rel="stylesheet" type="text/css" href="../../../css/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="../../../css/themes/icon.css">
+	<script type="text/javascript" src="../../../js/jquery.min.js"></script>
+	<script type="text/javascript" src="../../../js/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="../../../js/jquery.jqprint.js" charset="UTF-8" ></script>
+	<script type="text/javascript" src="../../../js/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="../../../js/common.js"></script>
+	<script type="text/javascript" src="../../../js/jquery-migrate-1.1.0.js" charset="UTF-8" ></script>
+	<script type="text/javascript" src="../../../js/jquery.jqprint.js" charset="UTF-8" ></script>
+	<script type="text/javascript" src="js/brandManagement.js" charset="UTF-8"></script>
+  </head>
+  
+  <body>
+   <!-- 标题以及各种功能按钮 -->
+   <table style="width:100%;padding:5px;">
+    	<tr>
+    		<td style="width:25%">
+    			<img src='../../../images/common/title.gif' style="vertical-align:middle;">品牌管理
+    		</td>
+    	</tr>
+    </table>
+    
+	<!-- 查询条件 -->
+	<form id="brandManagementSearch">
+		<table class="btbForm" >
+			<tr>
+				<td style="text-align:left;">
+	    			模糊条件&nbsp;<input id="brandManagementKeyWord" name="keyWord" class="easyui-textbox"  data-options="prompt:'请输入品牌名称、品牌首字母',width:200" />
+				</td>
+				<td style="text-align: right;">
+					<a class="easyui-linkbutton"  data-options="iconCls:'icon-search'" onclick="queryBrandManagement();">&nbsp;查&nbsp;&nbsp;询&nbsp;</a>
+    				<a class="easyui-linkbutton"  data-options="iconCls:'icon-add'" onclick="addBrandManagement();">&nbsp;新&nbsp;&nbsp;增&nbsp;</a>
+    				<a class="easyui-linkbutton"  data-options="" onclick="modifyBrandManagement();">&nbsp;修&nbsp;&nbsp;改&nbsp;</a>
+    				<a class="easyui-linkbutton"  data-options="iconCls:'icon-remove'" onclick="delBrandManagement();">&nbsp;删&nbsp;&nbsp;除&nbsp;</a>
+    			</td>
+    		</tr>
+		</table>
+	</form>
+	
+	<!-- 定义外边距 -->
+  	<div style="margin-top:5px"></div>
+  	
+  	<!-- 类型数据 -->
+  	<div style="width:100%;" id="brandManagementInfoPo">
+			<table id="brandManagementTable" class="easyui-datagrid" data-options="striped:true,fitColumns:true,autoRowHeight:true,pagination:true,loadMsg:'正在加载数据中，请等待！',singleSelect:true">   
+   				 <thead>   
+        			<tr>   
+           		 		<th data-options="field:'brandCode',width:100,align:'center',halign:'center',sortable:'true'">编号</th>   
+            			<th data-options="field:'brandName',width:120,align:'center',halign:'center'">品牌名称</th>   
+            			<th data-options="field:'fLetter',width:120,align:'center',halign:'center'">品牌首字母</th>    
+            			<th data-options="field:'sortNo',width:120,align:'center',halign:'center'">排序</th>
+            			<th data-options="field:'isShow',width:120,align:'center',halign:'center',formatter:showOrNot">显示</th>
+            			<th data-options="field:'do',width:120,align:'center',halign:'center',formatter:operation">操作</th>
+        			</tr>   
+    			</thead>   
+			</table> 
+	</div>
+	
+		<!-- 新增品牌界面 -->
+		<div id="brandManagementContainer" class="easyui-dialog" data-options="title:'新增品牌',closed:true,buttons:'#sc_add',modal:true" style="width:535px;height:400px;">
+			<form id="brandManagementForm" method="post" class="easyui-form">
+				<table style="border-collapse: separate;border-spacing: 10px;" >
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">品牌编号&nbsp;</td>
+	  				<td ><input id="addBrandCode" name="brandCode" class="easyui-textbox" data-options="required:true"></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">品牌名称&nbsp;</td>
+	  				<td ><input id="addBrandName" name="brandName" class="easyui-textbox" data-options="required:true"></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">品牌首字母&nbsp;</td>
+	  				<td ><input id="addFLetter" name="fLetter" class="easyui-textbox" data-options="required:true"></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">排序&nbsp;</td>
+	  				<td ><input id="addSortNo" name="sortNo" class="easyui-textbox" data-options="required:true"></td>
+	  			</tr>
+	  			<!-- <tr>
+	  				<td style="text-align: right;width: 65px;">是否显示&nbsp;</td>
+	  				<td >是<input id="addSortNoOne" name="isShow" type="radio" >&nbsp;&nbsp;&nbsp;
+	  					  否<input id="addSortNoTwo" name="isShow" type="radio" >
+	  				</td>
+	  			</tr> -->
+	  			<tr>
+	  				<td style="text-align: left;width: 65px;">待选商品大类&nbsp;</td>
+	  				<td style="text-align: left;width: 65px;">&nbsp;</td>
+	  				<td style="text-align: left;width: 65px;">适用商品大类&nbsp;</td>
+	  			</tr>
+	  			<tr>
+	  				<td><input id="goodsToBeSelected" name="goodsToBeSelected" class="easyui-textbox"  data-options="prompt:'请输入关键字',icons:[{iconCls:'icon-search',handler:searchProductCategory}]"></td>
+	  				<td style="text-align: left;width: 65px;">&nbsp;</td>
+	  				<td><input id="addBrandManagementKeyWord" name="brandManagementKeyWord" class="easyui-textbox"  data-options="prompt:'请输入关键字',icons:[{iconCls:'icon-search',handler:applicableCommodities}]"></td>
+	  			</tr>
+	  			<tr>
+	  				<td><div class="all"><select name="leftProductCategories" id="left" class="left" multiple="multiple" size="10" style="width: 150px;height:200px"></select></div></td>
+	  				<td><div class="all" align="center" style="margin-top: 10px; width: 80px;margin-left: 30px">
+						<a id="moveRight" class="easyui-linkbutton" onclick="moveRight()" style="color:blue">&nbsp;>&nbsp;&nbsp;&nbsp;</a><br><br>
+						<a id="moveAllRight" class="easyui-linkbutton" onclick="moveAllRight()" style="color:blue">&nbsp;>>&nbsp;</a><br><br>
+						<a id="moveLeft" class="easyui-linkbutton" onclick="moveLeft()" style="color:blue">&nbsp;&nbsp;&lt;&nbsp;&nbsp;</a><br><br>
+						<a id="moveAllLeft" class="easyui-linkbutton" onclick="moveAllLeft()" style="color:blue">&nbsp;&lt;&lt;&nbsp;</a><br>
+						</div></td>
+	  				<td><div class="all"><select name="rightProductCategories" id="right" class="right" multiple="multiple" size="10" style="width: 150px;height:200px"></select></div></td>
+	  			</tr>
+	  		</table>
+			</form>
+		</div>
+		
+		
+		<!-- 修改品牌界面 -->
+		<div id="modifyBrandManagementContainer" class="easyui-dialog" data-options="title:'修改品牌',closed:true,buttons:'#sc_modify',modal:true" style="width:535px;height:400px;">
+			<form id="modifyBrandManagementForm" method="post" class="easyui-form">
+				<table style="border-collapse: separate;border-spacing: 10px;" >
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">品牌编号&nbsp;</td>
+	  				<td ><input id="modifyBrandCodeShow" name="brandCode" class="easyui-textbox" data-options="required:true,disabled:true"><input id="modifyBrandCode" name="brandCode" hidden></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">品牌名称&nbsp;</td>
+	  				<td ><input id="modifyBrandName" name="brandName" class="easyui-textbox" data-options="required:true"></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">品牌首字母&nbsp;</td>
+	  				<td ><input id="modifyFLetter" name="fLetter" class="easyui-textbox" data-options="required:true"></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">排序&nbsp;</td>
+	  				<td ><input id="modifySortNo" name="sortNo" class="easyui-textbox" data-options="required:true"></td>
+	  			</tr>
+	  			<!-- <tr>
+	  				<td style="text-align: right;width: 65px;">是否显示&nbsp;</td>
+	  				<td >是<input id="modifySortNoOne" name="isShow" type="radio" >&nbsp;&nbsp;&nbsp;
+	  					  否<input id="modifySortNoTwo" name="isShow" type="radio" >
+	  				</td>
+	  			</tr> -->
+	  			<tr>
+	  				<td style="text-align: left;width: 65px;">待选商品大类&nbsp;</td>
+	  				<td style="text-align: left;width: 65px;">&nbsp;</td>
+	  				<td style="text-align: left;width: 65px;">适用商品大类&nbsp;</td>
+	  			</tr>
+	  			<tr>
+	  				<td><input id="modifGoodsToBeSelected" name="goodsToBeSelected" class="easyui-textbox"  data-options="prompt:'请输入关键字',icons:[{iconCls:'icon-search',handler:modifySearchProductCategory}]"></td>
+	  				<td style="text-align: left;width: 65px;">&nbsp;</td>
+	  				<td><input id="modifBrandManagementKeyWord" name="keyWord" class="easyui-textbox"  data-options="prompt:'请输入关键字',icons:[{iconCls:'icon-search',handler:modifySearchApplicableCommodities}]"></td>
+	  			</tr>
+	  			<tr>
+	  				<td><div class="all"><select name="leftProductCategories" id="modifyLeft" class="modifyLeft" multiple="multiple" size="10" style="width: 150px;height:200px"></select></div></td>
+	  				<td><div class="all" align="center" style="margin-top: 10px; width: 80px;margin-left: 30px">
+						<a id="modifyMoveRight" class="easyui-linkbutton" onclick="modifyMoveRight()" style="color:blue">&nbsp;>&nbsp;&nbsp;&nbsp;</a><br><br>
+						<a id="modifyMoveAllRight" class="easyui-linkbutton" onclick="modifyMoveAllRight()" style="color:blue">&nbsp;>>&nbsp;</a><br><br>
+						<a id="modifyMoveLeft" class="easyui-linkbutton" onclick="modifyMoveLeft()" style="color:blue">&nbsp;&nbsp;&lt;&nbsp;&nbsp;</a><br><br>
+						<a id="modifyMoveAllLeft" class="easyui-linkbutton" onclick="modifyMoveAllLeft()" style="color:blue">&nbsp;&lt;&lt;&nbsp;</a><br>
+						</div></td>
+	  				<td><div class="all"><select name="rightProductCategories" id="modifyRight" class="modifyRight" multiple="multiple" size="10" style="width: 150px;height:200px"></select></div><input id="modifyCatCode" name="catCode" hidden></td>
+	  			</tr>
+	  		</table>
+			</form>
+		</div>
+		
+		
+	
+	<!-- 新增品牌的保存，关闭按钮 -->
+	<div id="sc_add">
+		<a id="addSaveBtn" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="color:blue" onclick="brandManagementSave();">保存</a>
+		<a id="addCloseBtn" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="color:blue" onclick="brandManagementClose();">取消</a>
+	</div>
+	
+	<!-- 修改品牌的保存，关闭按钮 -->
+	<div id="sc_modify">
+		<a id="modifySaveBtn" class="easyui-linkbutton" data-options="iconCls:'icon-save'" style="color:blue" onclick="modifyBrandManagementSave();">保存</a>
+		<a id="modifyCloseBtn" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="color:blue" onclick="modifyBrandManagementClose();">取消</a>
+	</div>
+  </body>
+</html>

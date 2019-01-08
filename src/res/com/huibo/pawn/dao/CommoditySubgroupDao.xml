@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huibo.pawn.dao.CommoditySubgroupDao">
+<!-- 初始化加载页面数据的SQL -->
+<select id="commoditySubgroupTable" resultType="com.huibo.pawn.po.ProductCatPo">
+	SELECT
+		cat1.CAT_CODE  			catCode ,
+		cat1.CAT_NAME			catName ,
+		cat1.P_CAT_CODE			pCatCode ,
+		cat2.CAT_NAME			pCatName ,
+		cat1.CAT_LVL 			catLvl ,
+		cat1.IS_SHOW			isShow
+	FROM
+		c_pawn_product_cat  cat1
+	LEFT JOIN
+		c_pawn_product_cat  cat2
+	ON
+		cat1.P_CAT_CODE	= cat2.CAT_CODE
+	WHERE
+		cat1.CAT_LVL = 2
+	<if test="params.bo.keyWord != null and params.bo.keyWord != ''">
+		and ( cat1.CAT_NAME like '%${params.bo.keyWord}%'
+			or cat1.CAT_CODE  like '%${params.bo.keyWord}%'
+			or cat2.CAT_NAME like '%${params.bo.keyWord}%'
+			or cat1.UNIT like '%${params.bo.keyWord}%'
+		)
+	</if>
+</select>
+
+<!-- 获取所有大类数据的SQL -->
+<select id="getPCatNameDropdown" resultType="com.huibo.pawn.po.ProductCatPo">
+	select
+		CAT_CODE     	catCode ,
+		CAT_NAME		catName 
+	from
+		c_pawn_product_cat
+	where
+		P_CAT_CODE = "0"
+</select>
+
+<!-- 新增商品小类 -->
+<insert id="addCommoditySubgroup">
+	insert
+	into
+		c_pawn_product_cat(
+			CAT_CODE ,
+			CAT_NAME ,
+			CAT_LVL ,
+			CAT_ROUTE ,
+			CAT_DESC ,
+			P_CAT_CODE ,
+			IS_SHOW
+		)
+	values(
+		#{catCode} ,
+		#{catName} ,
+		#{catLvl} ,
+		#{catRoute} ,
+		#{catDesc} ,
+		#{pCatCode} ,
+		#{isShow}
+	)
+</insert>
+
+<!-- 修改商品小类 -->
+<update id="updCommoditySubgroup">
+	update
+		c_pawn_product_cat
+	set
+		CAT_NAME = #{catName} ,
+		CAT_DESC = #{catDesc} ,
+		P_CAT_CODE = #{pCatCode} ,
+		CAT_ROUTE = #{catRoute}
+	where
+		CAT_CODE = #{catCode}
+</update>
+
+<!-- 禁用和启用 -->
+<update id="conversion">
+	update
+		c_pawn_product_cat
+	set
+		IS_SHOW = #{isShow}
+	where
+		CAT_CODE = #{catCode}
+</update>
+</mapper>

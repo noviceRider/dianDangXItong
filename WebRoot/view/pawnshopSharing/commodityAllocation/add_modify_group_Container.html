@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	.all {
+	float:left
+}
+</style>
+</head>
+<body>
+	<div id="add_modify_group_Panel" data-options="title:'商品小类',selected:true">
+	<div style="margin:5px 0;"></div>
+		<table>
+			<tr>
+				<td align="right" style="height: 40px">属性组编号</td>
+				<td><input id="add_modify_group_groupCode" name="groupCode"></td>
+			</tr>
+			<tr>
+				<td align="right" style="height: 40px">属性组名称</td>
+				<td><input id="add_modify_group_groupName" name="groupName"></td>
+			</tr>
+		</table>
+		<table>
+			<tr>
+				<td>待选商品大类</td>
+				<td width="40px"></td>
+				<td>已选商品大类</td>
+			</tr>
+			<tr>
+				<td><input name="keyWordByNo" id="selectCommodityByNo" value=""></td>
+				<td width="40px"></td>
+				<td><input name="keyWordByYes" id="selectCommodityByYes" value=""></td>
+			</tr>
+		</table>
+		<div style="width: '100%';height: 200px">
+			<div style="margin:5px 0;"></div>
+			<div class="all">
+				<select name="left" id="left" class="left" multiple="multiple" style="width: 150px; height:180px;margin-left: 10px"></select>
+			</div>
+			<div style="margin:5px 0;"></div>
+			<div class="all" align="center" style="margin-top: 30px; width: 80px">
+				<a id="moveRight" onclick="moveRight()"></a><br>
+				<a id="moveAllRight" onclick="moveAllRight()"></a><br>
+				<a id="moveLeft" onclick="moveLeft()"></a><br>
+				<a id="moveAllLeft" onclick="moveAllLeft()"></a><br>
+			</div>
+			<div style="margin:5px 0;"></div>
+			<div class="all">
+				<select name="left" id="right" class="right" multiple="multiple" style="width: 150px ;height:180px;"></select>
+			</div>
+		</div>
+		<div id="saveAndCancel" align="right">
+			<a id="savegroup"></a>&nbsp;&nbsp;&nbsp;
+			<a id="cancelgroup"></a>
+		</div>
+	</div>
+</body>
+</html>

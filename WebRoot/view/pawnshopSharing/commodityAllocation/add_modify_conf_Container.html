@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div id="add_modify_conf_Panel" data-options="title:'商品大类',selected:true">
+	<div style="margin:5px 0;"></div>
+		<table>
+			<tr>
+				<td align="right" style="height: 40px" id="attrCode">属性编号</td>
+				<td><input id="add_modify_conf_attrCode" name="attrCode"></td>
+			</tr>
+			<tr>
+				<td align="right" style="height: 40px">属性名称</td>
+				<td><input id="add_modify_conf_attrName" name="attrName"></td>
+			</tr>
+			<tr>
+				<td align="right" style="height: 40px">属性类型</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<input type="radio" name="attrType" value="01">唯一属性
+					<input type="radio" name="attrType" value="02">单选属性
+					<input type="radio" name="attrType" value="03">多选属性
+				</td>
+			</tr>
+			<tr>
+				<td align="right" style="height: 40px">可选属性值列表</td>
+			</tr>
+		</table>
+		<form action="" id="add_modify_conf_Form">
+			<table id="authenticate"></table>
+		</form>
+		<div id="saveAndCancel">
+			<a id="saveConf"></a>&nbsp;&nbsp;&nbsp;
+			<a id="cancelConf"></a>
+		</div>
+	</div>
+</body>
+</html>

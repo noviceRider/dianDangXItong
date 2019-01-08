@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.2//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huibo.pawn.dao.WarehouseConfigurationDao">
+<!-- 用sql标签封装重复使用的sql -->
+<sql id="baseSql">
+select
+			
+			warehouse.WH_CODE whCode,
+			warehouse.WH_NAME whName,
+			warehouse.CONTACT contact,
+			emp.EMP_NAME contactName,
+			warehouse.PHONE_NO phoneNo,
+			warehouse.ADDRESS address,
+			warehouse.WH_STAT whStateId,
+			dict.DICT_DESC whStat,
+			GROUP_CONCAT(shop.SHOP_NAME) relShop
+		from
+			c_pawn_warehouse warehouse
+		left join 
+			c_pawn_shop_wh_rel wsrel
+		on
+			warehouse.WH_CODE = wsrel.WH_CODE
+		left join 
+			(select  SHOP_NAME,SHOP_CODE  from c_pawn_shop where SHOP_STAT ="01")shop
+		on
+			shop.SHOP_CODE = wsrel.SHOP_CODE
+		left join 
+			info_ge_dict dict
+		on
+			dict.DICT_CODE = warehouse.WH_STAT
+		and
+			dict.TYPE_CODE = 'PC_VALID_N'
+		left join
+			i_hr_employee emp
+		on
+			emp.EMP_ID = warehouse.CONTACT
+</sql>
+<!-- 加载数据表格并且返回list集合 -->
+<select id="loadWareHouseDataToTab" resultType="com.huibo.pawn.po.WareHouseConfigurationPo">
+
+		<include refid="baseSql"/>
+					where
+						1=1
+
+					<if test="params.bo.keyWord !=null and params.bo.keyWord !=''">
+					 and(
+					warehouse.WH_CODE like '%${params.bo.keyWord}%'
+						or
+					warehouse.WH_NAME like '%${params.bo.keyWord}%'
+						or
+					warehouse.PHONE_NO like '%${params.bo.keyWord}%')
+					</if>
+					<if test="params.bo.whStateId !=null and params.bo.whStateId !=''">
+					 and
+					 warehouse.WH_STAT = #{params.bo.whStateId}
+					</if>
+					
+		GROUP BY warehouse.WH_CODE
+	
+</select>
+
+<!-- 查询页面查询时可以选择查询的状态 -->
+<select id="loadStatueCombo" resultType="com.huibo.pawn.po.WareHouseConfigurationPo">
+	
+	select
+		dict.DICT_CODE whStateId,
+		dict.DICT_DESC whStat
+	from
+		
+		info_ge_dict dict
+	
+	where
+		dict.TYPE_CODE = 'PC_VALID_N'
+</select>
+
+<!-- 加载负责人列表 -->
+
+	<select id="loadContentCombo" resultType="com.huibo.pawn.po.WareHouseConfigurationPo">
+	
+	select
+		emp.EMP_NAME contactName,
+		emp.EMP_ID contact
+	from
+		
+		i_hr_employee emp
+	
+</select>
+<!-- 验证 编号重复-->
+	<select id="warehouseValidateState" resultType="Integer" >
+		SELECT COUNT(*) FROM c_pawn_warehouse warehouse
+		where
+		1=1
+			<if test="whCode != null and whCode != ''">
+				and
+				warehouse.WH_CODE = #{whCode}
+			</if>
+	
+	</select>
+	
+<!-- 添加仓储信息 -->
+	<insert id="addWareHouse">
+		insert
+		into
+			c_pawn_warehouse
+			(WH_CODE,WH_NAME,CONTACT,PHONE_NO,ADDRESS,WH_STAT)
+		values
+			(#{whCode},#{whName},#{contact},#{phoneNo},#{address},'01')
+	</insert>
+	
+<!-- 修改仓储信息 -->
+	<update id="updWareHouse">
+		update
+			c_pawn_warehouse
+		set
+		
+			WH_NAME=#{whName},
+			CONTACT=#{contact},
+			PHONE_NO=#{phoneNo},
+			ADDRESS=#{address}
+		
+		where
+			WH_CODE=#{whCode}
+	</update>
+
+<!-- 通过编号删除仓库信息 -->
+	<delete id="delWarehouse">
+		delete
+			ware,rel
+		from
+			c_pawn_warehouse ware 
+		left join 
+			c_pawn_shop_wh_rel rel
+		on	
+			ware.WH_CODE = rel.WH_CODE
+		where
+			ware.WH_CODE
+		in
+		<foreach collection="array" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	
+<!-- 改变仓库状态 -->
+	
+	<update id="updWarehouseStatue">
+		update
+			c_pawn_warehouse
+		<set>
+		<if test="whStateId == '00'">
+			WH_STAT='01'
+		</if>
+		<if test="whStateId == '01'">
+			WH_STAT='00'
+		</if>
+		</set>
+		where
+			WH_CODE=#{whCode}
+		
+	</update>
+</mapper>

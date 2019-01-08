@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huibo.pawn.dao.StoreInformationDao">
+
+<select id="getshopStateDropdown" resultType="com.huibo.pawn.po.StoreInformationPo">
+	select
+		DICT_CODE			shopState ,
+		DICT_DESC			shopDesc
+	from
+		info_ge_dict
+	where
+		TYPE_CODE = 'PC_VALID_N'
+</select>
+
+<select id="getStore" resultType="com.huibo.pawn.po.StoreInformationPo" parameterType="com.bn.javax.dao.Page">
+	select
+		shop.SHOP_CODE							shopCode ,
+		shop.SHOP_NAME							shopName ,
+		shop.CONTACT							contact ,
+		shop.PHONE_NO							phoneNo ,
+		shop.ADDRESS							address ,
+		shop.SHOP_STAT							shopState ,
+		DICT_DESC								shopDesc ,
+		warehouse.WH_CODE						whCode ,
+		GROUP_CONCAT(warehouse.WH_NAME)			whName
+	from
+		c_pawn_shop shop
+	LEFT JOIN
+		info_ge_dict dict
+	ON
+		dict.DICT_CODE = shop.SHOP_STAT AND dict.TYPE_CODE = 'PC_VALID_N'
+	LEFT JOIN
+		c_pawn_shop_wh_rel rel2
+	ON
+		rel2.SHOP_CODE = shop.SHOP_CODE
+	LEFT JOIN
+		c_pawn_warehouse warehouse
+	ON
+		warehouse.WH_CODE = rel2.WH_CODE
+	where
+		1=1
+	<if test="params.bo.keyWord != null and params.bo.keyWord != ''">
+		and (shop.SHOP_CODE like '%${params.bo.keyWord}%'
+		or shop.SHOP_NAME like '%${params.bo.keyWord}%'
+		or shop.CONTACT like '%${params.bo.keyWord}%'
+		or shop.PHONE_NO like '%${params.bo.keyWord}%'
+		or shop.ADDRESS like '%${params.bo.keyWord}%'
+		or (select
+				GROUP_CONCAT(warehouse.WH_NAME)
+			FROM
+				c_pawn_warehouse warehouse)
+		 like '%${params.bo.keyWord}%')
+	</if>
+	<if test="params.bo.state != null and params.bo.state != ''">
+		and shop.SHOP_STAT = #{params.bo.state}
+	</if>
+	GROUP BY shop.SHOP_CODE
+</select>
+
+<select id="getWareHouse" resultType="com.huibo.pawn.po.WareHouseConfigurationPo">
+	select
+		WH_CODE			whCode ,
+		WH_NAME			whName 
+	from
+		c_pawn_warehouse
+	where
+		WH_CODE not in (#{keyByYes})
+	<if test="keyword !='' and keyword !=null">
+		and	WH_NAME like '%${keyword}%'
+	</if>
+	
+</select>
+
+<insert id="addStore">
+	insert
+	into
+		c_pawn_shop(
+			SHOP_CODE ,
+			SHOP_NAME ,
+			CONTACT ,
+			PHONE_NO ,
+			ADDRESS ,
+			SHOP_STAT 
+		)
+	value(
+		#{shopCode} ,
+		#{shopName} ,
+		#{contact} ,
+		#{phoneNo} ,
+		#{address} ,
+		#{shopState}
+	)
+</insert>
+
+<insert id="addStoreAndWhouse">
+	insert
+	into
+		c_pawn_shop_wh_rel(
+			SHOP_CODE ,
+			WH_CODE
+		)
+	values
+		<foreach collection="a" item="whCode"
+			open="(" close=")" separator="),(">
+		 #{shopCode}, #{whCode}
+		</foreach>
+		
+</insert>
+
+<select id="validatePriorityCode" resultType="Integer" parameterType="String">
+	SELECT COUNT(*) FROM c_pawn_shop shop
+	<where>
+		<if test="shopCode != null and shopCode != ''">
+			and shop.SHOP_CODE = #{shopCode}
+		</if>
+	</where>
+</select>
+
+<update id="operation">
+	update
+		c_pawn_shop
+	set
+		SHOP_STAT = #{shopState}
+	where
+		SHOP_CODE = #{shopCode}
+</update>
+
+<select id="getStoreByShopCode" resultType="com.huibo.pawn.po.StoreInformationPo">
+	select
+		shop.SHOP_CODE							shopCode ,
+		shop.SHOP_NAME							shopName ,
+		shop.CONTACT							contact ,
+		shop.PHONE_NO							phoneNo ,
+		shop.ADDRESS							address 
+	from
+		c_pawn_shop shop
+	where
+		shop.SHOP_CODE = #{shopCode}
+</select>
+
+<select id="getWareHouseByShopCode" resultType="com.huibo.pawn.po.WareHouseConfigurationPo">
+	select
+		wh.WH_CODE 				whCode ,
+		wh.WH_NAME				whName
+	from
+		c_pawn_warehouse 	wh
+	left join
+		c_pawn_shop_wh_rel rel
+	on
+		rel.WH_CODE = wh.WH_CODE
+	where
+		rel.SHOP_CODE = #{shopCode}
+</select>
+
+<select id="getWareHouseNotInRight"  resultType="com.huibo.pawn.po.WareHouseConfigurationPo">
+	select
+		wh.WH_CODE 				whCode ,
+		wh.WH_NAME				whName
+	from
+		c_pawn_warehouse 	wh
+	where
+		wh.WH_CODE not in (${whCode})
+</select>
+
+<update id="updStore">
+	update
+		c_pawn_shop
+	set
+		SHOP_NAME = #{shopName} ,
+		CONTACT = #{contact} ,
+		PHONE_NO = #{phoneNo} ,
+		ADDRESS = #{address}
+	where
+		SHOP_CODE = #{shopCode}
+</update>
+
+<delete id="removeStoreAndWare">
+	delete
+	from
+		c_pawn_shop_wh_rel
+	where
+		SHOP_CODE in (${shopCode})
+</delete>
+
+<delete id="delStore">
+	delete
+	from
+		c_pawn_shop
+	where
+		SHOP_CODE in (${shopCode})
+</delete>
+</mapper>

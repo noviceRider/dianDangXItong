@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+		<!-- 鉴定界面的商品信息页-->
+		<div id="authenticatePanel" class="easyui-dialog">
+			<form id="authenticateForm" method="post">	
+				<table style="border-collapse: separate;border-spacing: 10px;" >
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">商品编号&nbsp;</td>
+	  				<td ><input id="authenticategoodsId" name="goodsId" ><input id="authenticategoodsIdHide" name="goodsId" hidden></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">来源门店&nbsp;</td>
+	  				<td ><input id="authenticateshopCode" name="shopCode" ></td>
+	  				
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">录入时间&nbsp;</td>
+	  				<td ><input id="authenticateinputDate" name="inputDate" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">分类一级&nbsp;</td>
+	  				<td ><input id="authenticatecatCode" name="catCode" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">分类二级&nbsp;</td>
+	  				<td ><input id="authenticatesubCatCode" name="subCatCode" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">分类三级&nbsp;</td>
+	  				<td ><input id="authenticatedetailCatCode" name="detailCatCode" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">商品名称&nbsp;</td>
+	  				<td ><input id="authenticategoodsName" name="goodsName" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">商品品牌&nbsp;</td>
+	  				<td ><input id="authenticatebrandCode" name="brandCode"></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">客户首买价&nbsp;</td>
+	  				<td ><input id="authenticatefirstPrice" name="firstPrice"></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">商品描述&nbsp;</td>
+	  				<td ><input id="authenticategoodsDesc" name="goodsDesc"></td>
+	  			</tr>
+	  		</table>
+	  		</form>
+		</div>
+		
+		<!-- 鉴定界面商品信息页的下一页按钮 -->
+		<div id="sc_authenticate">
+			<a id="authenticateNextPageBtn" class="easyui-linkbutton" data-options="iconCls:'icon-import'"  ></a>
+		</div>
+		
+		<!-- 鉴定界面的商品属性页 -->
+		<div id="authenticateProductAttributeContainerPanel" class="easyui-dialog"  >
+			<table style="border-collapse: separate;border-spacing: 10px;" id="authenticateProductAttributeTable"></table>
+		</div>
+		
+		<!-- 鉴定界面的商品属性页的上一页和下一页按钮 -->
+		<div id="sc_authenticateAttribute">
+			<a id="authenticateAttributeBackBtn" class="easyui-linkbutton" data-options="iconCls:'icon-back'"  ></a>
+			<a id="authenticateAttributeNextPageBtn" class="easyui-linkbutton" data-options="iconCls:'icon-import'"  ></a>
+		</div>
+		
+		<!-- 商品鉴定页 -->
+		<div id="goodsAuthenticatePanel" class="easyui-dialog">
+			<form id="goodsAuthenticateForm" method="post">	
+				<table style="border-collapse: separate;border-spacing: 10px;" >
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">新旧程度&nbsp;</td>
+	  				<td ><select id="authenticateGoodsQuality" name="goodsQuality" >
+	  						<option value='9成'>9成</option>
+	  						<option value='8成'>8成</option>
+	  						<option value='7成'>7成</option>
+	  						<option value='6成'>6成</option>
+	  				</select></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">备注&nbsp;</td>
+	  				<td ><input id="authenticateIdentifyDesc" name="identifyDesc" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">&nbsp;</td>
+	  				<td ><a id="historicalAppraisalBtn" class="easyui-linkbutton"></a></td>
+	  			</tr>
+	  		</table>
+	  		</form>
+		</div>
+		
+		<!-- 商品鉴定页的上一页，鉴定为正品，鉴定为假货，资料不全，取消按钮 -->
+		<div id="sc_goodsAuthenticate">
+			<a id="goodsAuthenticateBackBtn" class="easyui-linkbutton" data-options="iconCls:'icon-back'"  ></a>
+			<a id="qualityGoodsBtn" class="easyui-linkbutton" data-options="iconCls:'icon-ok'"  ></a>
+			<a id="fakeBtn" class="easyui-linkbutton" data-options="iconCls:'icon-ok'"  ></a>
+			<a id="insufficientInformationBtn" class="easyui-linkbutton" data-options="iconCls:'icon-ok'"  ></a>
+			<a id="insufficientInformationCancelBtn" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'"  ></a>
+		</div>
+		
+		<!-- 历史鉴定记录页面 -->
+		<div id="historicalRecordPanel" class="easyui-dialog" style="width:100%;">
+			<form id="historicalRecordForm">
+			<table id="historicalRecordTable" border="2" align="center" height="30" width="600" bordercolor="#CC0000">
+				<tr>
+					<th style="text-align: center"><font color="balck">序号</font></th>
+					<th style="text-align: center"><font color="balck">真假</font></th>
+					<th style="text-align: center"><font color="balck">新旧程度</font></th>
+					<th style="text-align: center"><font color="balck">鉴定人</font></th>
+					<th style="text-align: center"><font color="balck">鉴定时间</font></th>
+					<th style="text-align: center"><font color="balck">备注</font></th>
+				</tr>
+			</table> 
+			</form>
+		</div>
+		
+		<!-- 评估界面 -->
+		<div id="goodsAssessmentPanel" class="easyui-dialog">
+			<form id="goodsAssessmentForm" method="post">	
+				<table style="border-collapse: separate;border-spacing: 10px;" >
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">官方价&nbsp;</td>
+	  				<td ><input id="assessmentOfficialPrice" name="officialPrice" ><input id="inAssessingGoodsIdHide" name="goodsId" hidden></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">评估价&nbsp;</td>
+	  				<td ><input id="assessmentValuationPrice" name="valuationPrice" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">典当价&nbsp;</td>
+	  				<td ><input id="assessmentPawnPrice" name="pawnPrice" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">收购价&nbsp;</td>
+	  				<td ><input id="assessmentRchasePrice" name="rchasePrice" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">售卖价&nbsp;</td>
+	  				<td ><input id="assessmentSellingPrice" name="sellingPrice" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">租价&nbsp;</td>
+	  				<td ><input id="assessmentRentalPrice" name="rentalPrice" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">备注&nbsp;</td>
+	  				<td ><input id="assessmentAppraiseDesc" name="appraiseDesc" ></td>
+	  			</tr>
+	  		</table>
+	  		</form>
+		</div>
+		
+		<!-- 评估界面的上一页，评估记录，保存,取消按钮 -->
+		<div id="sc_assessment">
+			<a id="assessmentBackBtn" class="easyui-linkbutton" data-options="iconCls:'icon-back'"  ></a>
+			<a id="assessmentRecordsBtn" class="easyui-linkbutton" data-options="iconCls:'icon-ok'"  ></a>
+			<a id="assessmentSave" class="easyui-linkbutton" data-options="iconCls:'icon-ok'"  ></a>
+			<a id="assessmentCancel" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'"  ></a>
+		</div>
+		
+		<!-- 评估界面的商品鉴定页 -->
+		<div id="inAssessingPanel" class="easyui-dialog">
+			<form id="inAssessingForm" method="post">	
+				<table style="border-collapse: separate;border-spacing: 10px;" >
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">商品序号&nbsp;</td>
+	  				<td ><input id="inAssessingGoodsId" name="goodsId" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">新旧程度&nbsp;</td>
+	  				<td ><input id="inAssessingGoodsQuality" name="goodsQuality" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">鉴定结果&nbsp;</td>
+	  				<td ><input id="inAssessingIdentifyResult" name="identifyResult" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">鉴定人&nbsp;</td>
+	  				<td ><input id="inAssessingCreateBy" name="createBy" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">鉴定时间&nbsp;</td>
+	  				<td ><input id="inAssessingCreateTime" name="createTime" ></td>
+	  			</tr>
+	  			<tr>
+	  				<td style="text-align: right;width: 65px;">备注&nbsp;</td>
+	  				<td ><input id="inAssessingIdentifyDesc" name="identifyDesc" ></td>
+	  			</tr>
+	  		</table>
+	  		</form>
+		</div>
+		
+		<!-- 评估界面的商品鉴定页的下一页按钮 -->
+		<div id="sc_inAssessing">
+			<a id="inAssessingNextBtn" class="easyui-linkbutton" data-options="iconCls:'icon-import'"  ></a>
+		</div>
+		
+		<!-- 历史估价记录 -->
+		<div id="theHistoricalValuePanel" class="easyui-dialog" style="width:100%;">
+			<form id="theHistoricalValueForm">
+			<table id="theHistoricalValueTable" border="2" align="center" height="30" width="600" bordercolor="#CC0000">
+				<tr>
+					<th style="text-align: center"><font color="balck">序号</font></th>
+					<th style="text-align: center"><font color="balck">官方价</font></th>
+					<th style="text-align: center"><font color="balck">评估价</font></th>
+					<th style="text-align: center"><font color="balck">评估人</font></th>
+					<th style="text-align: center"><font color="balck">评估时间</font></th>
+					<th style="text-align: center"><font color="balck">备注</font></th>
+				</tr>
+			</table> 
+			</form>
+		</div>
+</body>
+</html>

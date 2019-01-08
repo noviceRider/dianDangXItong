@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huibo.pawn.dao.ProductCatDao">
+
+<!-- 初始化加载页面数据的SQL -->
+<select id="getCommodity" resultType="com.huibo.pawn.po.ProductCatPo">
+	select
+		CAT_CODE     	catCode ,
+		CAT_NAME		catName ,
+		CAT_DESC		catDesc 
+	from
+		c_pawn_product_cat
+	where
+		P_CAT_CODE = "0"
+		<if test="params.bo.keyWord != null and params.bo.keyWord != ''">
+		and	( CAT_NAME like '%${params.bo.keyWord}%'
+				or CAT_DESC like '%${params.bo.keyWord}%'
+				or CAT_CODE like '%${params.bo.keyWord}%'
+			)
+		</if>
+</select>
+
+<!-- 增加商品大类的SQL -->
+<insert id="addProductCat">
+	insert
+	into
+		c_pawn_product_cat(
+			CAT_CODE ,
+			CAT_NAME ,
+			CAT_LVL ,
+			CAT_ROUTE ,
+			CAT_DESC ,
+			P_CAT_CODE ,
+			EVAL_PIC_DEF ,
+			IS_SHOW
+		)
+	values(
+		#{catCode} ,
+		#{catName} ,
+		#{catLvl} ,
+		#{catCode} ,
+		#{catDesc} ,
+		#{pCatCode} ,
+		#{evalPicDef} ,
+		#{isShow}
+	)
+</insert>
+
+
+<!-- 查找附件表最大的编号 -->
+<select id="getPawnAttachCode" resultType="Integer">
+	SELECT
+		IFNULL(MAX(RES_ID),0)
+	FROM
+		info_ge_resource
+</select>
+
+<!-- 增加商品大类的图标 -->
+<insert id="addPawnAttachPo">
+	insert
+	into
+		info_ge_resource(
+			RES_ID ,
+			RES_FILE ,
+			FILE_SIZE ,
+			MIME_TYPE 
+		)
+	values(
+		#{resId} ,
+		#{resFile} ,
+		#{fileSize} ,
+		#{mimeType}
+	)
+</insert>
+
+<!-- 让附件和商品大类相关联 -->
+<insert id="addPawnAttach">
+	insert
+	into
+		info_ge_resref(
+			RES_ID ,
+			INFO_ID ,
+			INFO_TYPE
+		)
+		values(
+			${resId} ,
+			${catCode} ,
+			1003
+		)
+</insert>
+
+<!-- 根据编号单条查询 -->
+<select id="getProductCatByCatCode" resultType="com.huibo.pawn.po.ProductCatPo">
+	select
+		CAT_CODE     	catCode ,
+		CAT_NAME		catName ,
+		CAT_DESC		catDesc ,
+		UNIT			unit ,
+		EVAL_PIC_DEF	evalPicDef
+	from
+		c_pawn_product_cat
+	where
+		CAT_CODE = ${catCode}
+</select>
+
+<!-- 根据编号查询附件信息 -->
+<select id="getPawnAttach" resultType="com.huibo.pawn.po.PawnAttachPo">
+	SELECT
+		RES_ID  			resId ,
+		RES_FILE  		resFile 
+	FROM
+		info_ge_resource
+	WHERE
+		RES_ID = (
+			SELECT
+				RES_ID
+			FROM
+				info_ge_resref
+			WHERE
+				INFO_ID = ${catCode}
+			AND
+				INFO_TYPE = 1003
+		)
+</select>
+
+<!-- 修改附件和商品大类相关联数据 -->
+<update id="updPawnAttachByCatCode">
+	update
+		info_ge_resref
+	set
+		RES_ID = ${resId}
+	where
+		INFO_ID = ${catCode}
+</update>
+
+<!-- 修改商品大类的接口 -->
+<update id="updProductCat">
+	update
+		c_pawn_product_cat
+	set
+		CAT_NAME = #{catName} ,
+		CAT_DESC = #{catDesc} ,
+		EVAL_PIC_DEF = #{evalPicDef}
+	where
+		CAT_CODE = #{catCode}
+</update>
+
+<!-- 删除附件和商品大类相关联数据 -->
+<delete id="removePawnAttachByCatCode">
+	DELETE
+	FROM
+		info_ge_resref
+	WHERE
+		INFO_ID in (${catCode})
+</delete>
+
+<!-- 根据编号数据获取上级编号 -->
+<select id="getPCatCodeByCatCodeABC" resultType="com.huibo.pawn.po.ProductCatPo">
+	SELECT
+		CAT_CODE   catCode
+	FROM
+		c_pawn_product_cat
+	WHERE
+		P_CAT_CODE 
+	IN
+	(
+		SELECT
+			CAT_CODE
+		FROM
+			c_pawn_product_cat
+		WHERE
+			P_CAT_CODE in (${catCode})
+	)
+	OR
+		P_CAT_CODE in (${catCode})
+	or
+		CAT_CODE in (${catCode})
+</select>
+
+<!-- 删除商品大类的SQL -->
+<delete id="removeProductCatByCatCode">
+	DELETE
+	FROM
+		c_pawn_product_cat
+	WHERE
+		CAT_CODE in (${pCatCode})
+</delete>
+
+<!-- 表单验证之非重验证 -->
+<select id="validatePriorityCode" resultType="Integer" parameterType="String">
+	SELECT COUNT(*) FROM c_pawn_product_cat
+	<where>
+		<if test="catCode != null and catCode != ''">
+			and CAT_CODE = "${catCode}"
+		</if>
+	</where>
+</select>
+</mapper>

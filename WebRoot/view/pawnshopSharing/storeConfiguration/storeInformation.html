@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>角色授权</title>
+	<meta charset="UTF-8">
+		<meta name="content-type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" type="text/css" href="../../../css/common/main.css" />
+		<link rel="stylesheet" type="text/css" href="../../../css/themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../../../css/themes/icon.css">
+		<script type="text/javascript" src="../../../js/jquery.min.js"></script>
+		<script type="text/javascript" src="../../../js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../../../js/common.js"></script>
+		<script type="text/javascript" src="js/storeInformation.js"></script>
+		<style type="text/css">
+			.datagrid-btable .datagrid-cell{padding:4px 4px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;} 
+			a{
+				color: blue;
+			}
+		</style>
+  </head>
+  
+  <body style='margin: 0;'>
+		<table class='btbHead'>
+			<tr>
+				<td style='width: 25%;'>
+					<img src='../../../images/common/title.gif' align='absmiddle'/> 门店管理
+				</td>
+				<td style='text-align: right;'>
+					<a class="easyui-linkbutton" iconCls="icon-search"  onclick="queryStore();">&nbsp;查&nbsp;&nbsp;询&nbsp;</a>
+					<a class="easyui-linkbutton" iconCls="icon-add" onclick="addStore();">&nbsp;增&nbsp;&nbsp;加&nbsp;</a>
+					<a class="easyui-linkbutton" iconCls="icon-remove" onclick="delStore();">&nbsp;删&nbsp;&nbsp;除&nbsp;</a>
+					<a class="easyui-linkbutton" iconCls="icon-edit" onclick="updStore();">&nbsp;修&nbsp;&nbsp;改&nbsp;</a>
+				</td>
+			</tr>
+		</table>
+		
+		<!-- 查询表单 -->
+		<form id="tb">
+			<table class="btbForm">
+				<tr>
+					<td>
+						关键字&nbsp;<input name="keyWord" id="keyWord" class="easyui-textbox" data-options="prompt:'请输入严重程度编号、描述等关键字'" style="width:250px;"/>
+						&nbsp;&nbsp;&nbsp;状态&nbsp;<input name="state" id="state" type="text" value="" />
+					</td>
+				</tr>
+			</table>
+		</form>
+		
+		<div style="margin:5px 0;"></div>
+		
+		<!-- 门店列表 -->
+		<table class="easyui-datagrid" id="storeTable"
+		data-options="striped:true,
+		fitColumns:true,
+		autoRowHeight:true,
+		pagination:true,
+		loadMsg:'正在加载数据中，请等待！'"
+		style="width:100%;">
+		<thead>   
+        	<tr> 
+            	<th data-options="field:'shopCode',align:'center',width:'10%'">门店编号</th>   
+            	<th data-options="field:'shopName',align:'center',width:'15%'">门店名称</th>   
+            	<th data-options="field:'contact',align:'center',width:'15%'">联系人</th>
+            	<th data-options="field:'phoneNo',align:'center',width:'15%'">手机号</th>
+            	<th data-options="field:'address',align:'center',width:'15%'">地址</th>
+            	<th data-options="field:'whName',align:'center',width:'15%'">管辖仓库</th> 
+            	<th data-options="field:'shopDo',align:'center',width:120,formatter:sun">操作</th> 
+        	</tr> 
+   		</thead>   
+	</table>
+	<div id="add_modify_store_Container"></div>
+	</body>
+</html>
